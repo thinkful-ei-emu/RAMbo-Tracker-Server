@@ -24,3 +24,47 @@ Run the tests `npm test`
 ## Deploying
 
 When your new project is ready for deployment, add a new Heroku application with `heroku create`. This will make a new git remote called "heroku" and you can then `npm run deploy` which will push to this remote's master branch.
+
+
+POST /user
+Post user request:
+        {
+                 username, 
+                 password, 
+                 display_ name
+       }
+        Response: 
+        {
+                username, 
+display_name,
+Location,
+item
+}
+    
+Get user request:
+    {
+jwt_token
+}
+
+    Get user response:
+    {
+        username,
+        display_name,
+        Events: 
+            [{type: meal, ingredients: a, b, c, time: 2134234}, {type: symptom, symptom: ‘bloating’, severity: 99999999, time: 13o2847912378}]
+        Symptoms: [‘bloating’, ‘headaches’]
+    }
+
+
+    Post symptom request:
+    {
+        Symptom: ‘bloating’,
+        Severity: 999999999999
+}
+Post symptom response: 201 created
+
+Post meal request (numbers are ids of foods selected): 
+{
+    Items: [123123, 234, 2345356, 1345, 4356546]
+}
+Post meal response: 201 created
