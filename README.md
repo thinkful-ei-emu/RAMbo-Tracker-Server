@@ -27,44 +27,59 @@ When your new project is ready for deployment, add a new Heroku application with
 
 
 POST /user
-Post user request:
-        {
-                 username, 
-                 password, 
-                 display_ name
-       }
-        Response: 
-        {
-                username, 
-display_name,
-Location,
-item
-}
-    
-Get user request:
+  request:
     {
-jwt_token
-}
+      username, 
+      password, 
+      display_name
+    }
+  response: 
+    location
 
-    Get user response:
+POST /login
+    
+GET /user 
+  request:
     {
-        username,
-        display_name,
-        Events: 
-            [{type: meal, ingredients: a, b, c, time: 2134234}, {type: symptom, symptom: ‘bloating’, severity: 99999999, time: 13o2847912378}]
-        Symptoms: [‘bloating’, ‘headaches’]
+      jwt_token
     }
 
-
-    Post symptom request:
+  response:
     {
-        Symptom: ‘bloating’,
-        Severity: 999999999999
-}
-Post symptom response: 201 created
+      username,
+      display_name,
+      events: 
+        [
+          {
+            type: meal, 
+            ingredients: a, b, c, 
+            time: 2134234
+          }, 
+          {
+            type: symptom, 
+            symptom: ‘bloating’, 
+            severity: 99999999, 
+            time: 13o2847912378
+          }
+        ]
+        symptoms: [‘bloating’, ‘headaches’]
+    }
 
-Post meal request (numbers are ids of foods selected): 
-{
-    Items: [123123, 234, 2345356, 1345, 4356546]
-}
-Post meal response: 201 created
+POST /event 
+  request:
+    {
+        type: symptom,
+        symptom: ‘bloating’,
+        severity: 999999999999,
+        time: 134134234
+    }
+  response: 201 created
+
+POST /event  
+  request(numbers are ids of foods selected in the USDA database):
+    {
+      type: meal,
+      items: [123123, 234, 2345356, 1345, 4356546],
+      time: 123123123
+    }
+  response: 201 created
