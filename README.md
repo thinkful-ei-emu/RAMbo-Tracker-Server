@@ -1,7 +1,6 @@
 # a template for express servers
-# Express Boilerplate!
+# Demo
 
-This is a boilerplate project used for starting new projects!
 
 ## Set up
 
