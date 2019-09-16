@@ -36,7 +36,17 @@ POST /user
   response: 
     location
 
-POST /login
+POST /auth/token
+  request:
+    {
+      username,
+      password
+    }
+
+  response:
+    {
+      jwt_token
+    }
     
 GET /user 
   request:
@@ -52,30 +62,39 @@ GET /user
         [
           {
             type: meal, 
-            ingredients: a, b, c, 
+            items: [
+              {
+                name: 'hamburger',
+                ingredients: ['wheat', 'beef', 'salt', 'spices']
+              },
+              {
+                name: 'fries'.
+                ingredients: ['palm oil', 'potato', 'salt']
+              }
+            ]
             time: 2134234
           }, 
           {
             type: symptom, 
             symptom: ‘bloating’, 
-            severity: 99999999, 
+            severity: 4, 
             time: 13o2847912378
           }
         ]
         symptoms: [‘bloating’, ‘headaches’]
     }
 
-POST /event 
+POST /event
   request:
     {
-        type: symptom,
-        symptom: ‘bloating’,
-        severity: 999999999999,
-        time: 134134234
+      type: 'symptom'
+      symptom: ‘bloating’,
+      severity: 999999999999,
+      time: 134134234
     }
   response: 201 created
 
-POST /event  
+POST /event
   request(numbers are ids of foods selected in the USDA database):
     {
       type: meal,
@@ -83,3 +102,28 @@ POST /event
       time: 123123123
     }
   response: 201 created
+
+<!-- GET /food/search?term=butter
+  response: 
+  {
+    total: 123,
+    results:
+    [
+      {
+        offset: 0,
+        name: 'Super Excellent Butter',
+        ndbno: 1231231,
+        manu: 'Excellent Butter Company,
+      },
+      {
+        name: 'Okay butter',
+        ndbno: 123123,
+        manu: 'Mediocre Butter Company'
+      }
+    ]
+  } -->
+
+
+
+  
+
