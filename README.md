@@ -31,34 +31,34 @@ When your new project is ready for deployment, add a new Heroku application with
 
 POST /user
   request:
-    {
+   ` {
       username, 
       password, 
       display_name
-    }
+    }`
   response: 
     location
 
 POST /auth/token
   request:
-    {
+    `{
       username,
       password
-    }
+    }`
 
   response:
-    {
+    `{
       jwt_token
-    }
+    }`
     
 GET /user 
   request:
-    {
+    `{
       jwt_token
-    }
+    }`
 
   response:
-    {
+    `{
       username,
       display_name,
       events: 
@@ -85,7 +85,7 @@ GET /user
           }
         ]
         symptoms: [‘bloating’, ‘headaches’]
-    }
+    }`
 
 ### Events: Either Symptom or Meal
 
@@ -93,23 +93,23 @@ GET /user
 
 POST /event
   request:
-    {
+    `{
       type: 'symptom'
       symptom: ‘bloating’,
       severity: 999999999999,
       time: 134134234
-    }
+    }`
   response: 201 created
 
 #### Posting a meal
 
 POST /event
   request(numbers are ids of foods selected in the USDA database):
-    {
+   ` {
       type: meal,
       items: [123123, 234, 2345356, 1345, 4356546],
       time: 123123123
-    }
+    }`
   response: 201 created
 
 #### Searching for a food to add to a meal
@@ -118,7 +118,7 @@ POST /event
 
 GET /food/search?term=butter
   response: 
-  {
+  `{
     total: 123,
     results:
     [
@@ -134,7 +134,7 @@ GET /food/search?term=butter
         manu: 'Mediocre Butter Company'
       }
     ]
-  }
+  }`
 
 #### Posting a food to a meal
 
