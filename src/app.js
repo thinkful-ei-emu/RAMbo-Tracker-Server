@@ -6,15 +6,20 @@ require('dotenv').config();
 
 const {NODE_ENV} = require('./config');
 const morganOptions = 'common';
-
+const EventRouter = require('./event/event-router')
+const FoodRouter = require('./food/FoodRouter')
 app.use(helmet());
 app.use(cors());
 app.use(morgan(morganOptions));
 
 
+//app.use('/api/event', EventRouter)
+app.use('/api/food', FoodRouter)
+
 app.get('/',(req,res)=>{
   res.status(200).send('Hello World');
 });
+
 
 //error handle
 app.use((err, req, res, next)=>{

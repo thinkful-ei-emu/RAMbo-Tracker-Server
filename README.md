@@ -122,8 +122,3 @@ GET /food/search?term=butter
       }
     ]
   }
-
-
-
-  
-

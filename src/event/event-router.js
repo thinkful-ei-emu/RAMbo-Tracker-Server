@@ -4,9 +4,9 @@ const EventRouter = express.Router();
 const jsonBodyParser = express.json();
 
 
-EventRouter
+/* EventRouter
   .use(jsonBodyParser);
-
+ */
 EventRouter
   .post('/', async (req, res, next) => {
     try{
