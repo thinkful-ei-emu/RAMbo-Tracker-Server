@@ -10,14 +10,12 @@ const rp = require("request-promise");
 
 //when user searches for food item to add to meal
 FoodRouter
-.get("/search/:search", jsonBodyParser, async (req, res, next) => {
+.get("/search/:search", jsonBodyParser, (req, res, next) => {
   const search = req.params.search;
   if (!search) {
     res.send(400).json({ error: "Missing 'term' in request body" });
   }
-  //const food = await service.getFood(req.app.get('db'), search)
-  if(food == []){
-    rp(
+  rp(
     `https://api.nal.usda.gov/ndb/search/?format=xml&sort=r&q=${search}&max=25&offset=0&api_key=${USDA_API_KEY}`
   )
     .then(body => {
@@ -25,11 +23,7 @@ FoodRouter
     })
     .catch(err => {
       return res.status(400).json(err);
-    });}
- 
-      return res.status(201).json(food);
-
-    
+    });
 })
 //when user wants to add food item to meal, adding ID (ITEM) to meal, search for reports for food item and use service to add ingredients
 .post("/", jsonBodyParser, async (req, res) => {

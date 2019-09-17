@@ -114,6 +114,8 @@ POST /event
 
 #### Searching for a food to add to a meal
 
+##### This endpoint utilizes the USDA Food Composition Databases
+
 GET /food/search?term=butter
   response: 
   {
