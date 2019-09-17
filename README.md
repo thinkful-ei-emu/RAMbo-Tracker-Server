@@ -103,7 +103,7 @@ POST /event
     }
   response: 201 created
 
-<!-- GET /food/search?term=butter
+GET /food/search?term=butter
   response: 
   {
     total: 123,
@@ -121,7 +121,7 @@ POST /event
         manu: 'Mediocre Butter Company'
       }
     ]
-  } -->
+  }
 
 
 
