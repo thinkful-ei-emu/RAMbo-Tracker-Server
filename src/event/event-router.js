@@ -3,8 +3,6 @@ const EventService = require('./event-service');
 const EventRouter = express.Router();
 const jsonBodyParser = express.json();
 
-
-
 EventRouter
   .post('/', jsonBodyParser, async (req, res, next) => {
     try{
