@@ -1,1 +1,1 @@
-DROP TABLE IF Exist Users;
+DROP TABLE IF Exists Users;
