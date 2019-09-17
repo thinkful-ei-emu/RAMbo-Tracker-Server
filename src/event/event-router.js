@@ -4,15 +4,13 @@ const EventRouter = express.Router();
 const jsonBodyParser = express.json();
 
 
-/* EventRouter
-  .use(jsonBodyParser);
- */
+
 EventRouter
-  .post('/', async (req, res, next) => {
+  .post('/', jsonBodyParser, async (req, res, next) => {
     try{
       const {type, time} = req.body;
       if(!type){
-        res.status(500).send('no type included')
+        res.status(400).send('no type included')
       }
       if(type === 'symptom'){
         const {symptom, severity} = req.body;
@@ -22,9 +20,12 @@ EventRouter
           time, 
           severity
         };
-        await EventService.postSymptom(req.app.get('db'), event);
-        res.status(201).send('created');
-      }
+        const response = await EventService.postSymptom(req.app.get('db'), event);
+        return res
+        .status(201)
+        .location(path.posix.join(req.originalUrl, `/${user_id}/${response.symptom_id}`))
+        .json({response})
+            }
       if(type === 'meal'){
         const {items} = req.body;
         const event = {
@@ -32,8 +33,11 @@ EventRouter
           items: items,
           time
         };
-        await EventService.postMeal(req.app.get('db'), event);
-        res.status(201).send('created');
+       const response = await EventService.postMeal(req.app.get('db'), event);
+        return res
+  .status(201)
+  .location(path.posix.join(req.originalUrl, `/${user_id}/${response.meal_id}`))
+  .json({response})
       }
       next();
     }

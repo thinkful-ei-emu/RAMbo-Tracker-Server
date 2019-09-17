@@ -25,6 +25,9 @@ Run the tests `npm test`
 
 When your new project is ready for deployment, add a new Heroku application with `heroku create`. This will make a new git remote called "heroku" and you can then `npm run deploy` which will push to this remote's master branch.
 
+## API ENDPOINTS 
+
+### User Login, Registration
 
 POST /user
   request:
@@ -84,6 +87,10 @@ GET /user
         symptoms: [‘bloating’, ‘headaches’]
     }
 
+### Events: Either Symptom or Meal
+
+#### Posting a symptom 
+
 POST /event
   request:
     {
@@ -94,6 +101,8 @@ POST /event
     }
   response: 201 created
 
+#### Posting a meal
+
 POST /event
   request(numbers are ids of foods selected in the USDA database):
     {
@@ -102,6 +111,8 @@ POST /event
       time: 123123123
     }
   response: 201 created
+
+#### Searching for a food to add to a meal
 
 GET /food/search?term=butter
   response: 
@@ -122,3 +133,10 @@ GET /food/search?term=butter
       }
     ]
   }
+
+#### Posting a food to a meal
+
+POST /food
+request(meal_id, food ndbno)
+
+This will both post the ndbno to the meal as well as request ingredients from the USDA DB

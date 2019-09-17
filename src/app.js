@@ -15,7 +15,7 @@ app.use(morgan(morganOptions));
 
 //app.use('/api/event', EventRouter)
 app.use('/api/food', FoodRouter)
-
+app.use('/api/event', EventRouter)
 app.get('/',(req,res)=>{
   res.status(200).send('Hello World');
 });
