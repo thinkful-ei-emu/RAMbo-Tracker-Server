@@ -1,5 +1,5 @@
 # a template for express servers
-# Testing a lock on master
+# Testing a change
 
 
 ## Set up
@@ -78,7 +78,7 @@ GET /user
             type: symptom, 
             symptom: ‘bloating’, 
             severity: 4, 
-            created: 13o2847912378
+            time: 13o2847912378
           }
         ]
         symptoms: [‘bloating’, ‘headaches’]
@@ -90,7 +90,7 @@ POST /event
       type: 'symptom'
       symptom: ‘bloating’,
       severity: 999999999999,
-      created: 134134234
+      time: 134134234
     }
   response: 201 created
 
@@ -99,7 +99,7 @@ POST /event
     {
       type: meal,
       items: [123123, 234, 2345356, 1345, 4356546],
-      created: 123123123
+      time: 123123123
     }
   response: 201 created
 
