@@ -10,8 +10,9 @@
     "test": "mocha --require test/setup.js",
     "dev": "nodemon src/server.js",
     "start": "node src/server.js",
-    "predeploy":"npm audit",
-    "deploy":"git push heroku master"
+    "predeploy": "npm audit",
+    "deploy": "git push heroku master",
+    "migrate": "postgrator --config postgrator-config.js"
   },
   "repository": {
     "type": "git",
@@ -30,11 +31,12 @@
     "dotenv": "^8.0.0",
     "express": "^4.17.1",
     "helmet": "^3.19.0",
-    "jsonwebtoken": "^8.5.1",
-    "knex": "^0.19.4",
     "morgan": "^1.9.1",
     "pg": "^7.12.1",
-    "postgrator-cli": "^3.10.2"
+    "xss": "^1.0.6",
+    "jsonwebtoken": "^8.5.1",
+    "knex": "^0.19.4",
+    "postgrator-cli": "^3.3.0"
   },
   "devDependencies": {
     "chai": "^4.2.0",
