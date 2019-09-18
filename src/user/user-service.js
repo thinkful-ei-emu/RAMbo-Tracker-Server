@@ -1,4 +1,5 @@
 const bcrypt = require('bcryptjs');
+const xss = require('xss');
 
 const UserService = {
   hasUserWithUserName(db, username) {
@@ -36,8 +37,8 @@ const UserService = {
   serializeUser(user) {
     return {
       id: user.id,
-      name: user.name,
-      username: user.username
+      name: xss(user.name),
+      username: xss(user.username)
     };
   }
 };
