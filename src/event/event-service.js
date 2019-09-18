@@ -1,5 +1,6 @@
 const EventService = {
-  postMeal(db, newMeal, /*user_id*/){
+  postMeal(db, newMeal, user_id){
+    
     //db..insert into...new meal
     return newMeal
   },

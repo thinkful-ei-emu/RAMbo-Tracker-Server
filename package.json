@@ -33,6 +33,7 @@
     "knex": "^0.19.4",
     "morgan": "^1.9.1",
     "pg": "^7.12.1",
+    "request": "^2.88.0",
     "request-promise": "^4.2.4"
   },
   "devDependencies": {
