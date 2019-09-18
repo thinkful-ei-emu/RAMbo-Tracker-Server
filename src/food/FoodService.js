@@ -3,7 +3,7 @@ const FoodService = {
     return db("food").where('ndbno', ndbno );
   },
   addFood(db, ndbno, name) {
-    return db("food").insert({ ndbno }, { name });
+    return db("food").insert({'ndbno': ndbno, 'name': name });
   },
   async addIngredients(db, ndbno, body) {
     const arrayOfIngredients = await this.parseIngredients(body);
@@ -20,12 +20,16 @@ const FoodService = {
       if (ingredientsArray[i].includes("CONTAINS")) {
         ingredientsArray.splice(i, 1);
       }
+      ingredientsArray[i].trim();
       for (let j = 0; j < ingredientsArray[i].length; j++) {
         if (ingredientsArray[i][j] === "(") {
           ingredientsArray[i] = ingredientsArray[i].replace(/\(/g, "");
         }
         if (ingredientsArray[i][j] === ")") {
           ingredientsArray[i] = ingredientsArray[i].replace(/\)/g, "");
+        }
+        if (ingredientsArray[i][j] === ".") {
+          ingredientsArray[i] = ingredientsArray[i].replace(/\./g, "");
         }
       }
     }

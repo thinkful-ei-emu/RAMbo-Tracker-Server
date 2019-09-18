@@ -33,9 +33,10 @@ EventRouter.post("/", jsonBodyParser, async (req, res, next) => {
         time
       };
       //insert meal first
-      const response = await EventService.postMeal(req.app.get("db"), event);
-      //then insert foods by ID from array
-     
+      const response = await EventService.postMeal(req.app.get("db"), event, req.user.id);
+      //insert plates by ndbno and meal id which references user_id
+      await EventService.postPlates(req.app.get("db"), event, mealId)
+      
       return res
         .status(201)
         .location(
