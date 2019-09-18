@@ -2,11 +2,13 @@ const app = require('express')();
 const morgan = require('morgan');
 const helmet = require('helmet');
 const cors = require('cors');
+const userRouter = require('./user/user-router');
 require('dotenv').config();
 
 const {NODE_ENV} = require('./config');
 const morganOptions = 'common';
 
+app.use('/api/user', userRouter);
 app.use(helmet());
 app.use(cors());
 app.use(morgan(morganOptions));
