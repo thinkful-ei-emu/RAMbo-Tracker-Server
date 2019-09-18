@@ -10,6 +10,11 @@ const EventService = {
       await this.postPlate(db, event.items[i], mealId)
     }
   },
+  postPlate(db, ndbno, mealId){
+    return db
+    .from('plates')
+    .insert({'food': ndbno, 'meal': mealId})
+  },
   postSymptom(db, newSymptom, /* user_id */){
     //db...insert into...newSymptom
     return newSymptom
