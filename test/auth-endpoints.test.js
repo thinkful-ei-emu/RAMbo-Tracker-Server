@@ -1,3 +1,4 @@
+
 const jwt = require('jsonwebtoken');
 const app = require('../src/app');
 const helpers = require('./test-helpers');
@@ -35,6 +36,7 @@ describe.only('Auth Endpoints', function() {
 
       it(`responds with 400 required error when '${field}' is missing`, () => {
         delete loginAttemptBody[field];
+
 
         return supertest(app)
           .post('/api/auth/token')
@@ -87,3 +89,4 @@ describe.only('Auth Endpoints', function() {
     });
   });
 });
+

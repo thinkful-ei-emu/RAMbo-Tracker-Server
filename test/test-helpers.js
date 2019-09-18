@@ -1,9 +1,11 @@
+
 const knex = require('knex');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
 /**
  * create a knex instance connected to postgres
+
  */
 function makeKnexInstance() {
   return knex({
@@ -14,6 +16,7 @@ function makeKnexInstance() {
 
 /**
  * create a knex instance connected to postgres
+ * @returns {array} of user objects
  */
 function makeUsersArray() {
   return [
@@ -68,6 +71,7 @@ function cleanTables(db) {
         ])
       )
   );
+
 }
 
 /**
@@ -85,6 +89,7 @@ function seedUsers(db, users) {
       users[users.length - 1].id
     ]);
   });
+
 }
 
 module.exports = {
