@@ -1,12 +1,11 @@
+
 BEGIN;
-
 TRUNCATE
-  'users',
-  'symptoms',
-  'meals',
-  'severity';
+  users,
+  symptoms,
+  meals RESTART IDENTITY CASCADE ;
 
-INSERT INTO 'users' ('id', 'username', 'password', 'display_name')
+INSERT INTO users ( username, password, display_name)
 VALUES
 (
   'testuser',
@@ -16,21 +15,17 @@ VALUES
 );
 
 
-INSERT INTO 'symptoms' ( 'user', 'severity', 'type', 'timestamp')
+INSERT INTO symptoms ( user_id, severity_id, type)
 VALUES
 (
   1,
-  4, 
-  'bloating',
-  1568731573
+  1, 
+  'bloating'
 );
 
-INSERT INTO 'meals' ('user', 'food', 'ingredients', 'timestamp')
+INSERT INTO meals (user_id)
 VALUES
 (
-  1,
-  ARRAY [ 'hamburger', 'fries' ],
-  ARRAY [ 'wheat', 'beef', 'spices', 'palm oil', 'potato', 'salt' ]
+  1
 );
-
 COMMIT;
