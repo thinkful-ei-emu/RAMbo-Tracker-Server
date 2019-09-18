@@ -24,7 +24,7 @@ authRouter
       )
 
       if (!dbUser)
-        return res.status(400).json({
+        return res.status(401).json({
           error: 'Incorrect username or password',
         })
 
@@ -34,7 +34,7 @@ authRouter
       )
 
       if (!compareMatch)
-        return res.status(400).json({
+        return res.status(401).json({
           error: 'Incorrect username or password',
         })
 
