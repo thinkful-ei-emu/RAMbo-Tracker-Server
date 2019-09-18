@@ -38,7 +38,6 @@ function makeAuthHeader(user, secret = process.env.JWT_SECRET) {
 }
 
 /**
-
  */
 function cleanTables(db) {
   return db.transaction(trx =>

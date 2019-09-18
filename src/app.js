@@ -28,6 +28,7 @@ app.use((err, req, res, next)=>{
   }else{
     console.log(err);
     response = {error:{message:err.message,err}};
+    console.log(err);
   }
   res.status(500).json(response);
 });
