@@ -3,6 +3,7 @@ const morgan = require('morgan');
 const helmet = require('helmet');
 const cors = require('cors');
 const userRouter = require('./user/user-router');
+const authRouter = require('./auth/auth-router');
 require('dotenv').config();
 
 const {NODE_ENV} = require('./config');
@@ -11,6 +12,7 @@ const morganOptions = 'common';
 app.use(helmet());
 app.use(cors());
 app.use(morgan(morganOptions));
+app.use('/api/auth', authRouter);
 
 app.use('/api/user', userRouter);
 
@@ -24,6 +26,7 @@ app.use((err, req, res, next)=>{
   if(NODE_ENV === 'production'){
     response = {error:{message:'Critical Server Error'}};
   }else{
+    console.log(err);
     response = {error:{message:err.message,err}};
     console.log(err);
   }
