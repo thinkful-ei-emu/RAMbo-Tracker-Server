@@ -8,11 +8,11 @@ require('dotenv').config();
 const {NODE_ENV} = require('./config');
 const morganOptions = 'common';
 
-app.use('/api/user', userRouter);
 app.use(helmet());
 app.use(cors());
 app.use(morgan(morganOptions));
 
+app.use('/api/user', userRouter);
 
 app.get('/',(req,res)=>{
   res.status(200).send('Hello World');
