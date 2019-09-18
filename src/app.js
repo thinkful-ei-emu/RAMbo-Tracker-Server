@@ -22,10 +22,10 @@ app.get('/',(req,res)=>{
 app.use((err, req, res, next)=>{
   let response;
   if(NODE_ENV === 'production'){
-    console.log(err);
     response = {error:{message:'Critical Server Error'}};
   }else{
     response = {error:{message:err.message,err}};
+    console.log(err);
   }
   res.status(500).json(response);
 });
