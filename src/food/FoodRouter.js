@@ -3,12 +3,15 @@ const FoodRouter = express.Router();
 require("dotenv").config();
 const { USDA_API_KEY } = require("../config");
 const jsonBodyParser = express.json();
-//const path = require('path')
 const FoodService = require("./FoodService");
 const rp = require("request-promise");
+const { requireAuth } = require('../middleware/jwt-auth');
+
 
 //when user searches for food item to add to meal
-FoodRouter.get("/search/:search", jsonBodyParser, (req, res, next) => {
+FoodRouter
+.use(requireAuth)
+.get("/search/:search", jsonBodyParser, (req, res, next) => {
   const search = req.params.search;
   if (!search) {
     res.send(400).json({ error: "Missing 'term' in request body" });

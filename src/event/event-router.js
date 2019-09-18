@@ -2,8 +2,12 @@ const express = require("express");
 const EventService = require("./event-service");
 const EventRouter = express.Router();
 const jsonBodyParser = express.json();
+const { requireAuth } = require('../middleware/jwt-auth');
 
-EventRouter.post("/", jsonBodyParser, async (req, res, next) => {
+
+EventRouter
+.use(requireAuth)
+.post("/", jsonBodyParser, async (req, res, next) => {
   try {
     const { type, time } = req.body;
     if (!type) {
@@ -20,9 +24,6 @@ EventRouter.post("/", jsonBodyParser, async (req, res, next) => {
       const response = await EventService.postSymptom(req.app.get("db"), event);
       return res
         .status(201)
-        .location(
-          path.posix.join(req.originalUrl, `/${user_id}/${response.symptom_id}`)
-        )
         .json({ response });
     }
     if (type === "meal") {
@@ -30,18 +31,16 @@ EventRouter.post("/", jsonBodyParser, async (req, res, next) => {
       const event = {
         user: req.user.id,
         items: items,
-        time
+       
       };
       //insert meal first
-      const response = await EventService.postMeal(req.app.get("db"), event, req.user.id);
+      const response = await EventService.postMeal(req.app.get("db"), event, req.user.id );
       //insert plates by ndbno and meal id which references user_id
-      await EventService.postPlates(req.app.get("db"), event, mealId)
+      
+      await EventService.postPlates(req.app.get("db"), event, response.id)
       
       return res
         .status(201)
-        .location(
-          path.posix.join(req.originalUrl, `/${user_id}/${response.meal_id}`)
-        )
         .json({ response });
     }
     next();

@@ -1,11 +1,13 @@
 const EventService = {
-  postMeal(db, newMeal, user_id){
+  postMeal(db, user_id){
     return db
     .from('meals')
     .insert({user_id})
-    //db..insert into...new meal
+    .returning('*')
+    .then(([meal]) => meal)
   },
-  postPlates(db, event, mealId){
+
+  async postPlates(db, event, mealId){
     for(let i=0; i < event.items.length; i++){
       await this.postPlate(db, event.items[i], mealId)
     }
