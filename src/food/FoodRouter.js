@@ -2,7 +2,7 @@ const express = require("express");
 const FoodRouter = express.Router();
 require("dotenv").config();
 const { USDA_API_KEY } = require("../config");
-
+const FoodService = require("./FoodService")
 const jsonBodyParser = express.json();
 //const path = require('path')
 //const FoodService = require("./FoodService");
@@ -28,13 +28,13 @@ FoodRouter
 //when user wants to add food item to meal, adding ID (ITEM) to meal, search for reports for food item and use service to add ingredients
 .post("/", jsonBodyParser, async (req, res) => {
   const { item, name } = req.body;
-  //const food = await service.addFood(req.app.get('db'), item, name)
+  const food = await FoodService.addFood(req.app.get('db'), item, name)
   rp(
     `https://api.nal.usda.gov/ndb/V2/reports?ndbno=${item}&type=b&format=json&api_key=${USDA_API_KEY}`
   )
     .then(body => {
       console.log("BODY", body);
-      //service.addIngredient(req.app.get('db), item)
+      FoodService.addIngredients(req.app.get('db'), body)
     })
 
     .then(()=> {
