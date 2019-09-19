@@ -19,8 +19,8 @@ ResultsRouter
           let meals = await ResultsService.getMealsWithinSymptomThreshold(db, user.id, symptomInstance.created);
           meals.forEach(meal => {
             let foodIds = await ResultsRouter.getMealFoods(db, meal.id);
+            const frequencyIterator = Math.ceiling(symptomInstance.severity_id /2);
             foodIds.forEach(foodId => {
-              const frequencyIterator = Math.ceiling(symptomInstance.severity_id /2);
               if (!doesArrayObjectIncludeFoodId(foodArray, foodId)){
                 foodArray.push({foodId, frequency: frequencyIterator})
               }
