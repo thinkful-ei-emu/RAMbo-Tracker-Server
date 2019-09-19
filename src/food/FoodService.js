@@ -26,22 +26,21 @@ const FoodService = {
   parseIngredients(body) {
     const ingredientString = body.foods[0].food.ing.desc;
     console.log(ingredientString)
-    const ingredientsArray = ingredientString.split(",");
+    const ingredientsArray = ingredientString.split(/[,:\[\]\(\)\{\}.]/).filter(Boolean).map(str=>str.trim());
     for (let i = 0; i < ingredientsArray.length; i++) {
       //removing 'CONTAINS 2% or less of....'
-      if (ingredientsArray[i].includes("CONTAINS")) {
+      if (ingredientsArray[i].toLowerCase().includes("contains")) {
         ingredientsArray.splice(i, 1);
+        continue;
       }
-      ingredientsArray[i].trim();
+      if (ingredientsArray[i].toLowerCase().includes("less than")) {
+        ingredientsArray.splice(i, 1);
+        continue;
+      }
+      ingredientsArray[i]=ingredientsArray[i].trim();
       for (let j = 0; j < ingredientsArray[i].length; j++) {
-        if (ingredientsArray[i][j] === "(") {
-          ingredientsArray[i] = ingredientsArray[i].replace(/\(/g, "");
-        }
-        if (ingredientsArray[i][j] === ")") {
-          ingredientsArray[i] = ingredientsArray[i].replace(/\)/g, "");
-        }
-        if (ingredientsArray[i][j] === ".") {
-          ingredientsArray[i] = ingredientsArray[i].replace(/\./g, "");
+        if (ingredientsArray[i][j] === "*") {
+          ingredientsArray[i] = ingredientsArray[i].replace(/\*/g, "").trim();
         }
       }
     }
