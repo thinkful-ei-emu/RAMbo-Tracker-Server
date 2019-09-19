@@ -1,3 +1,4 @@
+
 require("dotenv").config();
 
 const app = require('./app');
@@ -8,8 +9,6 @@ const db = knex({
   client: 'pg',
   connection: DB_URL
 })
-
-app.set('db', db);
 
 app.set('db', db);
 

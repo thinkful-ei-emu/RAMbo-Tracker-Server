@@ -1,1 +1,1 @@
-DROP TABLE IF Exists Users CASCADE;
+DROP TABLE IF Exists users CASCADE;

@@ -1,7 +1,7 @@
 {
-  "name": "express-boilerplate",
+  "name": "symptom-tracker-server",
   "version": "1.0.0",
-  "description": "a template for express servers",
+  "description": "server for symptom tracker",
   "main": "src/server.js",
   "directories": {
     "test": "test"
@@ -10,8 +10,8 @@
     "test": "mocha --require test/setup.js",
     "dev": "nodemon src/server.js",
     "start": "node src/server.js",
-    "predeploy":"npm audit",
-    "deploy":"git push heroku master",
+    "predeploy": "npm audit",
+    "deploy": "git push heroku master",
     "migrate": "postgrator --config postgrator-config.js"
   },
   "repository": {
@@ -31,17 +31,20 @@
     "dotenv": "^8.0.0",
     "express": "^4.17.1",
     "helmet": "^3.19.0",
+    "knex": "^0.19.4",
     "morgan": "^1.9.1",
     "pg": "^7.12.1",
+    "request": "^2.88.0",
+    "request-promise": "^4.2.4",
     "xss": "^1.0.6",
     "jsonwebtoken": "^8.5.1",
-    "knex": "^0.19.4",
     "postgrator-cli": "^3.3.0"
   },
   "devDependencies": {
     "chai": "^4.2.0",
     "mocha": "^6.1.4",
     "nodemon": "^1.19.1",
+    "postgrator-cli": "^3.3.0",
     "supertest": "^4.0.2"
   }
 }
