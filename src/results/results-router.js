@@ -9,29 +9,36 @@ ResultsRouter.use(requireAuth).get('/', async (req, res, next) => {
     const user = req.user;
     let results = [];
     let foodArray = [];
-    const userSymptoms = await ResultsService.getUserSymptomTypes(db, user.id);
-    const symptomInstances = await userSymptoms.map(async (userSymptom, index) => {
+    let foodAndSymptoms = await ResultsService.getUserSymptomTypes(db, user.id);
+    foodAndSymptoms = await foodAndSymptoms.map(async (userSymptom, index) => {
       let symptomInstance = await ResultsService.getSymptomsByType(
         db,
         user.id,
         userSymptom.type
       );
       return {
-        [userSymptom.type] : symptomInstance
+        ...userSymptom,
+        instances: symptomInstance 
       }
     });
     //[{"bloating": {}}, ]
-    const meals = await symptomInstances.map(async (symptomInstance, index) => {
+    foodAndSymptoms.instances = await foodAndSymptoms.map(async (symptomInstance, index) => {
         let meals = await ResultsService.getMealsWithinSymptomThreshold(
           db,
           user.id,
           symptomInstance[index].created
         );
         return {
-          
+          ...symptomInstance,
+          meals
         }
-        meals.forEach(async (meal, index) => {
+      });
+      foodAndSymptoms = foodAndSymptoms.map(async (meal, index) => {
           let foodIds = await ResultsService.getMealFoods(db, meal.id);
+          return {
+            ...foodAndSymptoms,
+            foodIds
+          }
           const frequencyIterator = Math.ceil(symptomInstance.severity_id / 2);
           foodIds.forEach((foodId, index) => {
             if (!doesArrayObjectIncludeFoodId(foodArray, foodId.food)) {
