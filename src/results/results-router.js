@@ -48,7 +48,7 @@ ResultsRouter.use(requireAuth).get('/', async (req, res, next) => {
         });
       }
       partTwo = async ()=> {
-        console.log(foodArray);
+        console.log('foodArray', foodArray);
         let ingredientArray = [];
         foodArray.forEach(async (food) => {
         for (i = 0; i < food.frequency; i++) {
@@ -101,7 +101,7 @@ ResultsRouter.use(requireAuth).get('/', async (req, res, next) => {
         mostCommonIngredients
       };
       results.push(myResult);
-      console.log(myResult);
+      console.log('myResult', myResult);
       }
       waterfall([partOne(), partTwo()], (err)=>{
         if (err){
