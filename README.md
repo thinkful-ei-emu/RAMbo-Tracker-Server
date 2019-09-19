@@ -95,6 +95,7 @@ GET /user
       events: 
         [
           {
+            name:'Lunch'
             type: meal, 
             items: [
               {
@@ -110,7 +111,7 @@ GET /user
           }, 
           {
             type: symptom, 
-            symptom: ‘bloating’, 
+            name: ‘bloating’, 
             severity: 4, 
             time: 13o2847912378
           }
@@ -127,11 +128,7 @@ POST /event
     `{
       type: 'symptom'
       symptom: ‘bloating’,
-<<<<<<< HEAD
       severity: 3,
-=======
-      severity: 999999999999,
->>>>>>> 4faf139bf387fce8ad1ab9067d8384b4bf3e7cfc
       time: 134134234
     }`
   response: 201 created
@@ -147,13 +144,7 @@ POST /event
     }`
   response: 201 created
 
-<<<<<<< HEAD
 POST /food
-=======
-#### Searching for a food to add to a meal
-
-##### This endpoint utilizes the USDA Food Composition Databases
->>>>>>> 5b99255c2a258b54954ef8fb4a41e203336d8182
 
 GET /food/search?term=butter
   response: 
