@@ -104,7 +104,6 @@ ResultsRouter.use(requireAuth).get('/', async (req, res, next) => {
       results.push(myResult);
       console.log('myResult', myResult);
       }
-     
       partOne();
     });
 
