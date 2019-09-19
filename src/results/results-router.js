@@ -8,30 +8,32 @@ ResultsRouter.use(requireAuth).get('/', async (req, res, next) => {
     const db = req.app.get('db');
     const user = req.user;
     let results = [];
+    let foodArray = [];
     const userSymptoms = await ResultsService.getUserSymptomTypes(db, user.id);
-    console.log('userSymptoms', userSymptoms);
-    userSymptoms.forEach(async (userSymptom, index) => {
-      console.log('userSymptoms index', index);
-      let foodArray = [];
-      let symptomInstances = await ResultsService.getSymptomsByType(
+    const symptomInstances = await userSymptoms.map(async (userSymptom, index) => {
+      let symptomInstance = await ResultsService.getSymptomsByType(
         db,
         user.id,
         userSymptom.type
       );
-      symptomInstances.forEach(async (symptomInstance, index) => {
-        console.log('symptomInstances index', index);
+      return {
+        [userSymptom.type] : symptomInstance
+      }
+    });
+    //[{"bloating": {}}, ]
+    const meals = await symptomInstances.map(async (symptomInstance, index) => {
         let meals = await ResultsService.getMealsWithinSymptomThreshold(
           db,
           user.id,
-          symptomInstance.created
+          symptomInstance[index].created
         );
-        console.log('meals', meals);
+        return {
+          
+        }
         meals.forEach(async (meal, index) => {
-          console.log('meals index', index);
           let foodIds = await ResultsService.getMealFoods(db, meal.id);
           const frequencyIterator = Math.ceil(symptomInstance.severity_id / 2);
           foodIds.forEach((foodId, index) => {
-            console.log('foodIds index', index);
             if (!doesArrayObjectIncludeFoodId(foodArray, foodId.food)) {
               foodArray.push({
                 foodId: foodId.food,
@@ -41,7 +43,6 @@ ResultsRouter.use(requireAuth).get('/', async (req, res, next) => {
               const index = findIndexWithFoodId(foodArray, foodId.food);
               foodArray[index].frequency += frequencyIterator;
             }
-            console.log('foodArray', foodArray);
           });
         });
       });
@@ -98,7 +99,6 @@ ResultsRouter.use(requireAuth).get('/', async (req, res, next) => {
         mostCommonIngredients
       };
       results.push(myResult);
-      console.log(myResult);
     });
 
     res.status(200).json(results);
