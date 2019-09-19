@@ -48,6 +48,7 @@ ResultsRouter.use(requireAuth).get('/', async (req, res, next) => {
         });
       }
       partTwo = async ()=> {
+        console.log(foodArray);
         let ingredientArray = [];
         foodArray.forEach(async (food) => {
         for (i = 0; i < food.frequency; i++) {
