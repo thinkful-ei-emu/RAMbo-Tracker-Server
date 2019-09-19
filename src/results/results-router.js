@@ -10,105 +10,111 @@ ResultsRouter.use(requireAuth).get('/', async (req, res, next) => {
     let results = [];
     let foodArray = [];
     let foodAndSymptoms = await ResultsService.getUserSymptomTypes(db, user.id);
-    foodAndSymptoms = await foodAndSymptoms.map(async (userSymptom, index) => {
-      let symptomInstance = await ResultsService.getSymptomsByType(
+    console.log(foodAndSymptoms);
+    foodAndSymptoms = await foodAndSymptoms.map((userSymptom, index) => {
+      return ResultsService.getSymptomsByType(
         db,
         user.id,
         userSymptom.type
-      );
-      return {
-        ...userSymptom,
-        instances: symptomInstance 
-      }
-    });
-    //[{"bloating": {}}, ]
-    foodAndSymptoms.instances = await foodAndSymptoms.map(async (symptomInstance, index) => {
-        let meals = await ResultsService.getMealsWithinSymptomThreshold(
-          db,
-          user.id,
-          symptomInstance[index].created
-        );
+      )
+      .then(symptomInstance => {
         return {
-          ...symptomInstance,
-          meals
+          ...userSymptom,
+          instances: symptomInstance 
         }
-      });
-      foodAndSymptoms = foodAndSymptoms.map(async (meal, index) => {
-          let foodIds = await ResultsService.getMealFoods(db, meal.id);
-          return {
-            ...foodAndSymptoms,
-            foodIds
-          }
-          const frequencyIterator = Math.ceil(symptomInstance.severity_id / 2);
-          foodIds.forEach((foodId, index) => {
-            if (!doesArrayObjectIncludeFoodId(foodArray, foodId.food)) {
-              foodArray.push({
-                foodId: foodId.food,
-                frequency: frequencyIterator
-              });
-            } else {
-              const index = findIndexWithFoodId(foodArray, foodId.food);
-              foodArray[index].frequency += frequencyIterator;
-            }
-          });
-        });
-      });
-
-      let ingredientArray = [];
-      foodArray.forEach(async (food) => {
-        for (i = 0; i < food.frequency; i++) {
-          let ingredients = await ResultsService.getIngredientsByFood(
-            db,
-            food.foodId
-          );
-          ingredients.forEach((ingredient) => {
-            if (
-              !doesArrayObjectIncludeIngredientId(
-                ingredientArray,
-                ingredient.id
-              )
-            ) {
-              ingredientArray.push({ ingredient, frequency: 1 });
-            } else {
-              const index = findIndexWithIngredientId(
-                ingredientArray,
-                ingredient.id
-              );
-              ingredientArray[index].frequency += 1;
-            }
-          });
-        }
-      });
-      ingredientArray = ingredientArray.sort((a, b) => {
-        return a.frequency - b.frequency;
-      });
-      foodArray = foodArray.sort((a, b) => {
-        return a.frequency - b.frequency;
-      });
-      let mostCommonIngredients = ingredientArray.slice(0, 6);
-      let mostCommonFoodsIdsAndFrequencies = foodArray.slice(0, 6);
-      let mostCommonFoods = [];
-      mostCommonFoodsIdsAndFrequencies.forEach(
-        async (foodsIdsAndFrequencies) => {
-          let food = await ResultsService.getAFood(
-            db,
-            foodsIdsAndFrequencies.foodId
-          );
-          mostCommonFoods.push({
-            name: food.name,
-            frequency: foodsIdsAndFrequencies.frequency
-          });
-        }
-      );
-      let myResult = {
-        symptomType: userSymptom,
-        mostCommonFoods,
-        mostCommonIngredients
-      };
-      results.push(myResult);
+      })
+      
     });
 
-    res.status(200).json(results);
+    console.log(foodAndSymptoms);
+    // //[{"bloating": {}}, ]
+    // foodAndSymptoms.instances = await foodAndSymptoms.map(async (symptomInstance, index) => {
+    //     let meals = await ResultsService.getMealsWithinSymptomThreshold(
+    //       db,
+    //       user.id,
+    //       symptomInstance[index].created
+    //     );
+    //     return {
+    //       ...symptomInstance,
+    //       meals
+    //     }
+    //   });
+    //   foodAndSymptoms = foodAndSymptoms.map(async (meal, index) => {
+    //       let foodIds = await ResultsService.getMealFoods(db, meal.id);
+    //       return {
+    //         ...foodAndSymptoms,
+    //         foodIds
+    //       }
+    //       const frequencyIterator = Math.ceil(symptomInstance.severity_id / 2);
+    //       foodIds.forEach((foodId, index) => {
+    //         if (!doesArrayObjectIncludeFoodId(foodArray, foodId.food)) {
+    //           foodArray.push({
+    //             foodId: foodId.food,
+    //             frequency: frequencyIterator
+    //           });
+    //         } else {
+    //           const index = findIndexWithFoodId(foodArray, foodId.food);
+    //           foodArray[index].frequency += frequencyIterator;
+    //         }
+    //       });
+    //     });
+    //   });
+
+    //   let ingredientArray = [];
+    //   foodArray.forEach(async (food) => {
+    //     for (i = 0; i < food.frequency; i++) {
+    //       let ingredients = await ResultsService.getIngredientsByFood(
+    //         db,
+    //         food.foodId
+    //       );
+    //       ingredients.forEach((ingredient) => {
+    //         if (
+    //           !doesArrayObjectIncludeIngredientId(
+    //             ingredientArray,
+    //             ingredient.id
+    //           )
+    //         ) {
+    //           ingredientArray.push({ ingredient, frequency: 1 });
+    //         } else {
+    //           const index = findIndexWithIngredientId(
+    //             ingredientArray,
+    //             ingredient.id
+    //           );
+    //           ingredientArray[index].frequency += 1;
+    //         }
+    //       });
+    //     }
+    //   });
+    //   ingredientArray = ingredientArray.sort((a, b) => {
+    //     return a.frequency - b.frequency;
+    //   });
+    //   foodArray = foodArray.sort((a, b) => {
+    //     return a.frequency - b.frequency;
+    //   });
+    //   let mostCommonIngredients = ingredientArray.slice(0, 6);
+    //   let mostCommonFoodsIdsAndFrequencies = foodArray.slice(0, 6);
+    //   let mostCommonFoods = [];
+    //   mostCommonFoodsIdsAndFrequencies.forEach(
+    //     async (foodsIdsAndFrequencies) => {
+    //       let food = await ResultsService.getAFood(
+    //         db,
+    //         foodsIdsAndFrequencies.foodId
+    //       );
+    //       mostCommonFoods.push({
+    //         name: food.name,
+    //         frequency: foodsIdsAndFrequencies.frequency
+    //       });
+    //     }
+    //   );
+    //   let myResult = {
+    //     symptomType: userSymptom,
+    //     mostCommonFoods,
+    //     mostCommonIngredients
+    //   };
+    //   results.push(myResult);
+    // });
+
+    res.status(200);
     next();
   } catch (error) {
     console.log(error);
