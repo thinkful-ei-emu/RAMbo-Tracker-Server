@@ -1,10 +1,29 @@
 const EventService = {
-  postMeal(db, user_id) {
+  postMeal(db, user_id, name) {
     return db
       .from("meals")
       .insert({ user_id })
       .returning("*")
       .then(([meal]) => meal);
+  },
+  async getIngredients(db, ndbno){
+    return db
+      .select('ingredients.name')
+      .from("ingredients")
+      .where('ingredients.food',ndbno)
+  },
+  getMealsFromUser(db,user_id){
+    return db
+      .select('*')
+      .from('meals')
+      .where('meals.user_id',user_id)
+  },
+  getFoodsInMeal(db, mealid){
+    return db
+      .select('food.name','food.ndbno')
+      .from('plates')
+      .join('food','plates.food', 'food.ndbno')
+      .where('plates.meal',mealid)
   },
 
   async postPlates(db, event, mealId) {
@@ -15,37 +34,10 @@ const EventService = {
   postPlate(db, ndbno, mealId) {
     return db.from("plates").insert({ food: ndbno, meal: mealId });
   },
-  async getAllUserData(db, user_id) {
+  /* async getAllUserData(db, user_id) {
     let meals = await this.getAllMeals(db, user_id);
     let symptoms = await this.getAllSymptoms(db, user_id);
     let mealsAndSymptoms = [];
-    /* 
-    let result = Object.values(
-      meals.reduce(
-        (
-          c,
-          {
-            meal,
-            created,
-            ingredients,
-            food_name,
-            ingredients_name,
-            
-          }
-        ) => {
-          c[meal] = c[meal] || { meal, food: [] };
-          c[meal].created = created;
-          c[meal].food = c[meal].food.concat(
-            Array.isArray(food_name)
-              ? food_name
-              : [{ food_name: food_name, ingredients_name}]
-          );
-          return c;
-        },
-        {}
-      )
-    );
-    return result; */
     for (let i = 0; i < meals.length; i++) {
       let ingredientArr = [];
       let ingredient = await this.getIngredientsForFood(db, meals[i].ndbno);
@@ -65,7 +57,7 @@ const EventService = {
       symptoms.push(meals[i]);
     }
     return symptoms;
-  },
+  }, */
   getIngredientsForFood(db, ndbno) {
     return db
       .select("ingredients.name as ingredient_name")
@@ -73,7 +65,7 @@ const EventService = {
       .join("food", "food.ndbno", "ingredients.food")
       .where("food.ndbno", ndbno);
   },
-  getAllMeals(db, user_id) {
+  /* getAllMeals(db, user_id) {
     //SELECT food.name, ingredients.name, plates.meal, meals.created FROM food JOIN plates ON plates.food = food.ndbno JOIN ingredients ON ingredients.food = food.ndbno JOIN meals ON meals.id = plates.meal WHERE meals.user_id = 1;
     return db
       .select(
@@ -86,7 +78,7 @@ const EventService = {
       .join("plates", "plates.food", "food.ndbno")
       .join("meals", "meals.id", "plates.meal")
       .where("meals.user_id", user_id);
-  },
+  }, */
   getAllSymptoms(db, user_id) {
     return db
       .from("symptoms")
@@ -95,7 +87,11 @@ const EventService = {
   },
   postSymptom(db, newSymptom /* user_id */) {
     //db...insert into...newSymptom
-    return newSymptom;
+    return db
+      .from('symptoms')
+      .insert({ 'type':newSymptom.symptom, 'user_id':newSymptom.user, 'severity_id':newSymptom.severity })
+      .returning("*")
+      .then(([s]) => s);;
   }
 };
 

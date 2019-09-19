@@ -14,22 +14,31 @@ const FoodService = {
   parseIngredients(body) {
     const ingredientString = body.foods[0].food.ing.desc;
     console.log(ingredientString)
-    const ingredientsArray = ingredientString.split(",");
+    const ingredientsArray = ingredientString.split(/[,:]/).filter(Boolean);
     for (let i = 0; i < ingredientsArray.length; i++) {
       //removing 'CONTAINS 2% or less of....'
       if (ingredientsArray[i].includes("CONTAINS")) {
         ingredientsArray.splice(i, 1);
       }
-      ingredientsArray[i].trim();
+      ingredientsArray[i]=ingredientsArray[i].trim();
       for (let j = 0; j < ingredientsArray[i].length; j++) {
         if (ingredientsArray[i][j] === "(") {
-          ingredientsArray[i] = ingredientsArray[i].replace(/\(/g, "");
+          ingredientsArray[i] = ingredientsArray[i].replace(/\(/g, "").trim();
         }
         if (ingredientsArray[i][j] === ")") {
-          ingredientsArray[i] = ingredientsArray[i].replace(/\)/g, "");
+          ingredientsArray[i] = ingredientsArray[i].replace(/\)/g, "").trim();
+        }
+        if (ingredientsArray[i][j] === "]") {
+          ingredientsArray[i] = ingredientsArray[i].replace(/\]/g, "").trim();
+        }
+        if (ingredientsArray[i][j] === "[") {
+          ingredientsArray[i] = ingredientsArray[i].replace(/\[/g, "").trim();
         }
         if (ingredientsArray[i][j] === ".") {
-          ingredientsArray[i] = ingredientsArray[i].replace(/\./g, "");
+          ingredientsArray[i] = ingredientsArray[i].replace(/\./g, "").trim();
+        }
+        if (ingredientsArray[i][j] === "*") {
+          ingredientsArray[i] = ingredientsArray[i].replace(/\*/g, "").trim();
         }
       }
     }
