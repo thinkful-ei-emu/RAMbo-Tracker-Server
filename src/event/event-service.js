@@ -20,9 +20,10 @@ const EventService = {
     .from('plates')
     .insert({'food': ndbno, 'meal': mealId})
   },
-  postSymptom(db, newSymptom, /* user_id */){
-    //db...insert into...newSymptom
-    return newSymptom
+  postSymptom(db, newSymptom){
+    return db("symptoms")
+    .insert(newSymptom)
+    .returning('*')
   }
 }
 

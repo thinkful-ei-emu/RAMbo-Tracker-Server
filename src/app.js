@@ -17,7 +17,7 @@ app.use(morgan(morganOptions));
 app.use('/api/auth', authRouter);
 
 app.use('/api/user', userRouter);
-
+app.use('/api/results', ResultsRouter);
 app.use('/api/food', FoodRouter)
 app.use('/api/event', EventRouter)
 app.get('/',(req,res)=>{

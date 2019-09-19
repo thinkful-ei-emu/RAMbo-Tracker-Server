@@ -16,12 +16,13 @@ EventRouter
     if (type === "symptom") {
       const { symptom, severity } = req.body;
       const event = {
-        user: req.user.id,
-        symptom,
-        time,
-        severity
+        user_id: req.user.id,
+        type: symptom,
+        created: time,
+        severity_id: severity
       };
       const response = await EventService.postSymptom(req.app.get("db"), event);
+      console.log('post symptom response', response);
       return res
         .status(201)
         .json({ response });
@@ -29,12 +30,12 @@ EventRouter
     if (type === "meal") {
       const { items } = req.body;
       const event = {
-        user: req.user.id,
+        user_id: req.user.id,
         items: items,
        
       };
       //insert meal first
-      const response = await EventService.postMeal(req.app.get("db"), event.user);
+      const response = await EventService.postMeal(req.app.get("db"), user_id);
       //insert plates by ndbno and meal id which references user_id
       
       
