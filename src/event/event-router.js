@@ -6,7 +6,7 @@ const { requireAuth } = require('../middleware/jwt-auth');
 
 
 EventRouter
-.use(requireAuth)
+//.use(requireAuth)
 .post("/", jsonBodyParser, async (req, res, next) => {
   try {
     const { type, time } = req.body;
@@ -34,7 +34,7 @@ EventRouter
        
       };
       //insert meal first
-      const response = await EventService.postMeal(req.app.get("db"), event, req.user.id );
+      const response = await EventService.postMeal(req.app.get("db"),  event.user);
       //insert plates by ndbno and meal id which references user_id
       
       await EventService.postPlates(req.app.get("db"), event, response.id)
@@ -47,6 +47,16 @@ EventRouter
   } catch (error) {
     next(error);
   }
-});
+})
+.get('/', async (req, res, next)=>{
+  
+  let response = await EventService.getAllUserData(req.app.get('db'), 1)
+  
+  return res
+  .status(201)
+  .json({response})
+ 
+  });
+
 
 module.exports = EventRouter

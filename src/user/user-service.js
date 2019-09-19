@@ -41,6 +41,7 @@ const UserService = {
       username: xss(user.username)
     };
   }
+  
 };
 
 module.exports = UserService;
