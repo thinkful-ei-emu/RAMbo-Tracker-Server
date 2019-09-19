@@ -2,6 +2,7 @@ const express = require('express');
 const ResultsRouter = express.Router();
 const ResultsService = require('./results-service.js');
 const { requireAuth } = require('../middleware/jwt-auth');
+const waterfall = require('async-waterfall');
 
 ResultsRouter.use(requireAuth).get('/', async (req, res, next) => {
   try {
@@ -47,7 +48,7 @@ ResultsRouter.use(requireAuth).get('/', async (req, res, next) => {
           });
         });
       }
-      partTwo = async()=> {
+      partTwo = async ()=> {
         let ingredientArray = [];
         foodArray.forEach(async (food) => {
         for (i = 0; i < food.frequency; i++) {
@@ -102,8 +103,11 @@ ResultsRouter.use(requireAuth).get('/', async (req, res, next) => {
       results.push(myResult);
       console.log(myResult);
       }
-      await partOne();
-      await partTwo();
+      waterfall([partOne(), partTwo()], (err)=>{
+        if (err){
+          console.log(err);
+        }
+      });
     });
 
     res.status(200).json(results);
