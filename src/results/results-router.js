@@ -46,6 +46,7 @@ ResultsRouter.use(requireAuth).get('/', async (req, res, next) => {
             });
           });
         });
+        partTwo();
       }
       partTwo = async ()=> {
         console.log(foodArray);
@@ -103,11 +104,8 @@ ResultsRouter.use(requireAuth).get('/', async (req, res, next) => {
       results.push(myResult);
       console.log(myResult);
       }
-      waterfall([partOne(), partTwo()], (err)=>{
-        if (err){
-          console.log(err);
-        }
-      });
+     
+      partOne();
     });
 
     res.status(200).json(results);
