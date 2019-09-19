@@ -148,12 +148,18 @@ POST /event
   response: 201 created
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 POST /food
 =======
 #### Searching for a food to add to a meal
 
 ##### This endpoint utilizes the USDA Food Composition Databases
 >>>>>>> 5b99255c2a258b54954ef8fb4a41e203336d8182
+=======
+#### Searching for a food to add to a meal
+
+##### This endpoint utilizes the USDA Food Composition Databases
+>>>>>>> master
 
 GET /food/search?term=butter
   response: 
