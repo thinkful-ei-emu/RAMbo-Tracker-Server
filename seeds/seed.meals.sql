@@ -28,22 +28,28 @@ INSERT INTO "food" ("name", "ndbno") values
 ("Onions, yellow, sauteed", 11286);
 
 INSERT INTO "ingredients" ("name", "food") values
-("WATER", 2),
-("BROWN RICE FLOUR", 2),
-("POTATO STARCH", 2),
-("TAPIOCA STARCH", 2),
-("EGG WHITE", 2),
-("SALT", 2),
-("XANTHAM GUM", 2),
-("MILK", 2),
-("CHEESE CULTURES", 2),
-("SALT", 2),
-("ENZYMES", 2),
-("CORN STARCH", 2),
-("POTATO FLOUR", 2),
-("ANATTO", 2),
-("SEA SALT", 2),
-("SPICES", 2),
+("WATER", 45285302),
+("BROWN RICE FLOUR",45285302),
+("POTATO STARCH", 45285302),
+("TAPIOCA STARCH", 45285302),
+("EGG WHITE", 45285302),
+("SALT", 45285302),
+("XANTHAM GUM", 45285302),
+("MILK", 45285302),
+("CHEESE CULTURES", 45285302),
+("SALT", 45285302),
+("ENZYMES", 45285302),
+("CORN STARCH", 45285302),
+("POTATO FLOUR", 45285302),
+("ANATTO", 45285302),
+("SEA SALT", 45285302),
+("SPICES", 45285302);
+
+INSERT INTO "plates" ("food", "meal") values
+(45285302, 1),
+(45247145, 1),
+(45285302, 1),
+
 
 
 
