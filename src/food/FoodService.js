@@ -39,21 +39,6 @@ const FoodService = {
       }
       ingredientsArray[i]=ingredientsArray[i].trim();
       for (let j = 0; j < ingredientsArray[i].length; j++) {
-        if (ingredientsArray[i][j] === "(") {
-          ingredientsArray[i] = ingredientsArray[i].replace(/\(/g, "").trim();
-        }
-        if (ingredientsArray[i][j] === ")") {
-          ingredientsArray[i] = ingredientsArray[i].replace(/\)/g, "").trim();
-        }
-        if (ingredientsArray[i][j] === "]") {
-          ingredientsArray[i] = ingredientsArray[i].replace(/\]/g, "").trim();
-        }
-        if (ingredientsArray[i][j] === "[") {
-          ingredientsArray[i] = ingredientsArray[i].replace(/\[/g, "").trim();
-        }
-        if (ingredientsArray[i][j] === ".") {
-          ingredientsArray[i] = ingredientsArray[i].replace(/\./g, "").trim();
-        }
         if (ingredientsArray[i][j] === "*") {
           ingredientsArray[i] = ingredientsArray[i].replace(/\*/g, "").trim();
         }
