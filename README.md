@@ -127,11 +127,7 @@ POST /event
     `{
       type: 'symptom'
       symptom: ‘bloating’,
-<<<<<<< HEAD
-      severity: 3,
-=======
       severity: 999999999999,
->>>>>>> 4faf139bf387fce8ad1ab9067d8384b4bf3e7cfc
       time: 134134234
     }`
   response: 201 created

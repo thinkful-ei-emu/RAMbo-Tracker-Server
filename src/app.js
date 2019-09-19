@@ -20,10 +20,6 @@ app.use('/api/user', userRouter);
 
 app.use('/api/food', FoodRouter)
 app.use('/api/event', EventRouter)
-<<<<<<< HEAD
-app.use('/api/results', ResultsRouter)
-=======
->>>>>>> master
 app.get('/',(req,res)=>{
   res.status(200).send('Hello World');
 });
