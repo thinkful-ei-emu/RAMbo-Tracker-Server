@@ -18,12 +18,14 @@ ResultsRouter.use(requireAuth).get('/', async (req, res, next) => {
         userSymptom.type
       )
       .then(symptomInstance => {
+        return symptomInstance
+      })
+      .then(symptomInstance => {
         return {
           ...userSymptom,
           instances: symptomInstance 
         }
       })
-      
     });
 
     console.log(foodAndSymptoms);
