@@ -8,7 +8,7 @@ CREATE TABLE meals(
 DROP TABLE IF EXISTS food;
 CREATE TABLE food(
   name varchar,
-  ndbno TEXT PRIMARY KEY 
+  ndbno varchar PRIMARY KEY 
 );
 
 DROP TABLE IF EXISTS plates;
