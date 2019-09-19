@@ -5,12 +5,24 @@ const FoodService = {
   addFood(db, ndbno, name) {
     return db("food").insert({'ndbno': ndbno, 'name': name });
   },
+
+  /**
+   * 
+   * @param {the database} db 
+   * @param {the food item that the ingredient is being associated with} ndbno 
+   * @param {the body of the response from usda} body 
+   */
   async addIngredients(db, ndbno, body) {
     const arrayOfIngredients = await this.parseIngredients(body);
     for(let i = 0; i < arrayOfIngredients.length; i++){
     await this.insertIngredients(db, ndbno, arrayOfIngredients[i])
     }
   },
+  /**
+   * Takes the body of the USDA response for a specific food,
+   * gets the ingredients, and does some parsing to transform that into strings
+   * @param {the body of the response from usda to get to the ingredients have to dig deep} body 
+   */
   parseIngredients(body) {
     const ingredientString = body.foods[0].food.ing.desc;
     console.log(ingredientString)
