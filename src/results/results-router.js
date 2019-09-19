@@ -43,7 +43,6 @@ ResultsRouter.use(requireAuth).get('/', async (req, res, next) => {
                 const index = findIndexWithFoodId(foodArray, foodId.food);
                 foodArray[index].frequency += frequencyIterator;
               }
-              console.log('foodArray', foodArray);
             });
           });
         });
