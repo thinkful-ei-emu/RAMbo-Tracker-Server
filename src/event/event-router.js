@@ -34,16 +34,10 @@ EventRouter
        
       };
       //insert meal first
-<<<<<<< HEAD
-      const response = await EventService.postMeal(req.app.get("db"), event, req.user.id );
-      //insert plates by ndbno and meal id which references user_id
-      
-=======
       const response = await EventService.postMeal(req.app.get("db"), event.user);
       //insert plates by ndbno and meal id which references user_id
       
       
->>>>>>> master
       await EventService.postPlates(req.app.get("db"), event, response.id)
       
       return res
