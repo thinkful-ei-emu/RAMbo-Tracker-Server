@@ -1,8 +1,8 @@
 const EventService = {
-  postMeal(db, user_id, name) {
+  postMeal(db, user_id, name,time) {
     return db
       .from("meals")
-      .insert({ user_id })
+      .insert({ user_id,created:time })
       .returning("*")
       .then(([meal]) => meal);
   },
@@ -89,7 +89,7 @@ const EventService = {
     //db...insert into...newSymptom
     return db
       .from('symptoms')
-      .insert({ 'type':newSymptom.symptom, 'user_id':newSymptom.user, 'severity_id':newSymptom.severity })
+      .insert({ 'type':newSymptom.symptom, 'user_id':newSymptom.user, 'severity_id':newSymptom.severity, 'created':newSymptom.time })
       .returning("*")
       .then(([s]) => s);;
   }

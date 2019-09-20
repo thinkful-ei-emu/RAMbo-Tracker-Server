@@ -27,15 +27,16 @@ EventRouter
         .json( response );
     }
     if (type === "meal") {
-      const { items,name } = req.body;
+      const { items,name} = req.body;
       const event = {
         user: req.user.id,
         items,
-        name
+        name,
+        time
        
       };
       //insert meal first
-      const response = await EventService.postMeal(req.app.get("db"),  event.user,name);
+      const response = await EventService.postMeal(req.app.get("db"),  event.user,name,event.time);
       //insert plates by ndbno and meal id which references user_id
       
       
