@@ -6,7 +6,7 @@ const ResultsService = {
   },
   
   getSymptomsByType(db, user_id, type){
-    return db('symptoms').select('*').from('meals').where({user_id, type})
+    return db.select('*').from('symptoms').where({user_id, type})
   },
 
   getMealsWithinSymptomThreshold(db, user_id, timecode){

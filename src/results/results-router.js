@@ -11,36 +11,36 @@ ResultsRouter.use(requireAuth).get('/', async (req, res, next) => {
     let foodArray = [];
     let foodAndSymptoms = await ResultsService.getUserSymptomTypes(db, user.id);
     console.log(foodAndSymptoms);
-    foodAndSymptoms = await foodAndSymptoms.map((userSymptom, index) => {
-      return ResultsService.getSymptomsByType(
+    foodAndSymptoms = await Promise.all(foodAndSymptoms.map(async (userSymptom, index) => {
+      const symptomInstance = await ResultsService.getSymptomsByType(
         db,
         user.id,
         userSymptom.type
       )
-      .then(symptomInstance => {
-        return symptomInstance
-      })
-      .then(symptomInstance => {
+
         return {
           ...userSymptom,
           instances: symptomInstance 
         }
-      })
-    });
+    }));
 
     console.log(foodAndSymptoms);
-    // //[{"bloating": {}}, ]
-    // foodAndSymptoms.instances = await foodAndSymptoms.map(async (symptomInstance, index) => {
-    //     let meals = await ResultsService.getMealsWithinSymptomThreshold(
-    //       db,
-    //       user.id,
-    //       symptomInstance[index].created
-    //     );
-    //     return {
-    //       ...symptomInstance,
-    //       meals
-    //     }
-    //   });
+    foodAndSymptoms.forEach(async symptom => {
+      symptom.instances = await Promise.all(symptom.instances.map(async (symptomInstance, index) => {
+        let meals = await ResultsService.getMealsWithinSymptomThreshold(
+          db,
+          user.id,
+          symptomInstance[index].created
+        );
+        return {
+          ...symptomInstance,
+          meals
+        }
+      }));
+    })
+    
+
+      console.log(foodAndSymptoms[0].instances);
     //   foodAndSymptoms = foodAndSymptoms.map(async (meal, index) => {
     //       let foodIds = await ResultsService.getMealFoods(db, meal.id);
     //       return {
