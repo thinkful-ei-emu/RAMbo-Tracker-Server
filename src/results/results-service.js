@@ -11,16 +11,26 @@ const ResultsService = {
 
   async getMealsWithinSymptomThreshold(db, user_id, timecode){
     console.log('timecode', timecode);
-    return db('meals')
+    db('meals')
     .select('*')
     .from('meals')
     .where({user_id})
-    .andWhere(knex.raw(':created: BETWEEN :timecode - INTERVAL :fourhours AND timecode - INTERVAL :thirtyminutes', {
-      created: 'meals.created',
-      timecode,
-      fourhours: '4 hours',
-      thirtyminutes: '30 minutes'
-    }));
+    .then(userMeals => {
+      return userMeals.filter(meal => {
+        const mealDate = new Date(meal.created);
+        const timecodeDate = new Date(timecode);
+        // 1000 = 1sec , 60000 = 1 minute , 3600000 = 1 hr
+        if((timecodeDate.getTime() - mealDate.getTime()) < (1000*60*60*6) && timecodeDate.getTime() - mealDate.getTime() > 1000 * 60 ){
+          return true;
+        }
+        else{
+          return false;
+        }
+      });
+    })
+
+
+    
   },
 
   async getMealFoods(db, meal){
