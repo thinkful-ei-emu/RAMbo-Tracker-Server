@@ -85,11 +85,11 @@ const EventService = {
       .join("severity", "severity.id", "symptoms.severity_id")
       .where({ user_id });
   },
-  postSymptom(db, newSymptom /* user_id */) {
+  postSymptom(db, event /* user_id */) {
     //db...insert into...newSymptom
     return db
       .from('symptoms')
-      .insert({ 'type':newSymptom.symptom, 'user_id':newSymptom.user, 'severity_id':newSymptom.severity, 'created':newSymptom.time })
+      .insert(event)
       .returning("*")
       .then(([s]) => s);;
   }
