@@ -64,16 +64,16 @@ ResultsRouter.use(requireAuth).get('/', async (req, res, next) => {
             console.log('ingredientsArray index', k);
             let ingredient = ingredients[k];
             if (
-              !doesArrayObjectIncludeIngredientId(
+              !doesArrayObjectIncludeIngredientName(
                 ingredientArray,
-                ingredient.id
+                ingredient.name
               )
             ) {
               ingredientArray.push({ ingredient, frequency: 1 });
             } else {
-              const index = findIndexWithIngredientId(
+              const index = findIndexWithIngredientName(
                 ingredientArray,
-                ingredient.id
+                ingredient.name
               );
               ingredientArray[index].frequency += 1;
             }
@@ -136,19 +136,19 @@ function findIndexWithFoodId(array, id) {
     }
   }
 }
-function doesArrayObjectIncludeIngredientId(array, id) {
+function doesArrayObjectIncludeIngredientName(array, name) {
   let includes = false;
   array.forEach((item) => {
-    if (item.ingredient.id === id) {
+    if (item.ingredient.name === name) {
       includes = true;
     }
   });
   return includes;
 }
 
-function findIndexWithIngredientId(array, id) {
+function findIndexWithIngredientName(array, name) {
   for (let i = 0; i < array.length; i++) {
-    if (array[i].ingredient.id === id) {
+    if (array[i].ingredient.name === name) {
       return i;
     }
   }
