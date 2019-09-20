@@ -18,7 +18,7 @@ FoodRouter.use(requireAuth)
       `https://api.nal.usda.gov/ndb/search/?format=json&sort=r&q=${search}&max=25&offset=0&api_key=${USDA_API_KEY}`
     )
       .then((body) => {
-        return res.status(201).json(body);
+        return res.status(200).json(body);
       })
       .catch((err) => {
         return res.status(400).json(err);

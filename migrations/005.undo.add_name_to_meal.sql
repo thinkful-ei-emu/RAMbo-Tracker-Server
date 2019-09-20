@@ -1,0 +1,2 @@
+ALTER TABLE meals
+DROP COLUMN IF EXISTS name;

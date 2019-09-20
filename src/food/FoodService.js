@@ -25,23 +25,40 @@ const FoodService = {
    */
   parseIngredients(body) {
     const ingredientString = body.foods[0].food.ing.desc;
+    if(!(body.foods)){
+      return ['USDA res.body didn\'t even have foods key'];
+    }
+    if(!(body.foods[0])){
+      return ['USDA res.body.foods[0] was falsy'];
+    }
+    if(typeof body.foods[0] !== 'object'){
+      return ['USDA res.body.foods[0] was not an object'];
+    }
+    if(!(body.foods[0].food)){
+      return ['USDA res.body.foods[0].food is falsy'];
+    }
+    if(!(body.foods[0].food.ing)){
+      return ['No ingredients given by USDA'];
+    }
+    if(!(body.foods[0].food.ing.desc)){
+      return ['No ingredient description given by USDA'];
+    }
     console.log(ingredientString)
-    const ingredientsArray = ingredientString.split(",");
+    const ingredientsArray = ingredientString.split(/[,:\[\]\(\)\{\}.]/).filter(Boolean).map(str=>str.trim());
     for (let i = 0; i < ingredientsArray.length; i++) {
       //removing 'CONTAINS 2% or less of....'
-      if (ingredientsArray[i].includes("CONTAINS")) {
+      if (ingredientsArray[i].toLowerCase().includes("contains")) {
         ingredientsArray.splice(i, 1);
+        continue;
       }
-      ingredientsArray[i].trim();
+      if (ingredientsArray[i].toLowerCase().includes("less than")) {
+        ingredientsArray.splice(i, 1);
+        continue;
+      }
+      ingredientsArray[i]=ingredientsArray[i].trim();
       for (let j = 0; j < ingredientsArray[i].length; j++) {
-        if (ingredientsArray[i][j] === "(") {
-          ingredientsArray[i] = ingredientsArray[i].replace(/\(/g, "");
-        }
-        if (ingredientsArray[i][j] === ")") {
-          ingredientsArray[i] = ingredientsArray[i].replace(/\)/g, "");
-        }
-        if (ingredientsArray[i][j] === ".") {
-          ingredientsArray[i] = ingredientsArray[i].replace(/\./g, "");
+        if (ingredientsArray[i][j] === "*") {
+          ingredientsArray[i] = ingredientsArray[i].replace(/\*/g, "").trim();
         }
       }
     }
