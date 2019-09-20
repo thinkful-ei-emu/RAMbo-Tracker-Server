@@ -26,12 +26,15 @@ ResultsRouter.use(requireAuth).get('/', async (req, res, next) => {
           user.id,
           symptomInstance.created
         );
+        console.log('meals', meals);
         for (let k = 0; k < meals.length; k++) {
           let meal = meals[k];
-          let foodIds = await ResultsService.getMealFoods(db, meal.id);
+          let foodIds = await ResultsService.getMealFoods(db, meal.id); 
+          console.log('foodIds', foodIds);
           const frequencyIterator = Math.ceil(symptomInstance.severity_id / 2);
 
           for (let l = 0; l < foodIds.length; l++) {
+            console.log(foodArray);
             let foodId = foodIds[l];
             if (!doesArrayObjectIncludeFoodId(foodArray, foodId.food)) {
               foodArray.push({

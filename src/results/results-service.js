@@ -11,14 +11,16 @@ const ResultsService = {
 
   async getMealsWithinSymptomThreshold(db, user_id, timecode){
     console.log('timecode', timecode);
-    db('meals')
+    return db('meals')
     .select('*')
     .from('meals')
     .where({user_id})
     .then(userMeals => {
       return userMeals.filter(meal => {
         const mealDate = new Date(meal.created);
+        console.log('mealDate', mealDate);
         const timecodeDate = new Date(timecode);
+        console.log('timecodeDate', timecodeDate);
         // 1000 = 1sec , 60000 = 1 minute , 3600000 = 1 hr
         if((timecodeDate.getTime() - mealDate.getTime()) < (1000*60*60*6) && timecodeDate.getTime() - mealDate.getTime() > 1000 * 60 ){
           return true;

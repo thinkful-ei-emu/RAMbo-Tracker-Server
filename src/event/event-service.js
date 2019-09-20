@@ -89,7 +89,7 @@ const EventService = {
     //db...insert into...newSymptom
     return db
       .from('symptoms')
-      .insert({ 'type':newSymptom.symptom, 'user_id':newSymptom.user, 'severity_id':newSymptom.severity, 'created':newSymptom.time })
+      .insert({ 'type':newSymptom.type, 'user_id':newSymptom.user_id, 'severity_id':newSymptom.severity_id, 'created':newSymptom.time })
       .returning("*")
       .then(([s]) => s);;
   }
