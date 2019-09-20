@@ -90,6 +90,7 @@ ResultsRouter.use(requireAuth).get('/', async (req, res, next) => {
       });
       let mostCommonIngredients = ingredientArray.slice(0, 6);
       let mostCommonFoodsIdsAndFrequencies = foodArray.slice(0, 6);
+      console.log('(mostCommonFoodsIdsAndFrequencies', mostCommonFoodsIdsAndFrequencies)
       let mostCommonFoods = [];
 
       for (let i = 0; i < mostCommonFoodsIdsAndFrequencies.length; i++) {
@@ -98,6 +99,7 @@ ResultsRouter.use(requireAuth).get('/', async (req, res, next) => {
           db,
           foodsIdsAndFrequencies.foodId
         );
+        console.log('food', food);
         mostCommonFoods.push({
           name: food.name,
           frequency: foodsIdsAndFrequencies.frequency
