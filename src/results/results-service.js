@@ -1,15 +1,15 @@
 const knex = require('knex');
 
 const ResultsService = {
-  getUserSymptomTypes(db, user_id){
+  async getUserSymptomTypes(db, user_id){
     return db('symptoms').distinct('type').where({user_id})
   },
   
-  getSymptomsByType(db, user_id, type){
+  async getSymptomsByType(db, user_id, type){
     return db('symptoms').where({user_id, type})
   },
 
-  getMealsWithinSymptomThreshold(db, user_id, timecode){
+  async getMealsWithinSymptomThreshold(db, user_id, timecode){
     console.log('timecode', timecode);
     return db('meals')
     .select('*')
@@ -23,14 +23,14 @@ const ResultsService = {
     // }));
   },
 
-  getMealFoods(db, meal){
+  async getMealFoods(db, meal){
     return db('plates').select('food').where({meal})
   },
 
-  getAFood(db, ndbno){
+  async getAFood(db, ndbno){
     return db('food').where({ndbno})
   },
-  getIngredientsByFood(db,ndbno){
+  async getIngredientsByFood(db,ndbno){
     return db('ingredients').where({food : ndbno});
   }
 }
