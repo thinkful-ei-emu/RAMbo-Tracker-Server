@@ -3,60 +3,67 @@ const ResultsRouter = express.Router();
 const ResultsService = require('./results-service.js');
 const { requireAuth } = require('../middleware/jwt-auth');
 
-ResultsRouter.use(requireAuth).get('/',(req, res, next) => {
+ResultsRouter.use(requireAuth).get('/', async (req, res, next) => {
   try {
     const db = req.app.get('db');
     const user = req.user;
     let results = [];
     const userSymptoms = await ResultsService.getUserSymptomTypes(db, user.id);
     console.log('userSymptoms', userSymptoms);
-    userSymptoms.forEach((userSymptom, index) => {
-      console.log('userSymptoms index', index);
+    for (let i = 0; i < userSymptoms.length; i++) {
+      let userSymptom = userSymptoms[i];
+      console.log('userSymptoms index', i);
       let foodArray = [];
-   
-        let symptomInstances = await ResultsService.getSymptomsByType(
+
+      let symptomInstances = await ResultsService.getSymptomsByType(
+        db,
+        user.id,
+        userSymptom.type
+      );
+
+      for (let i = 0; i < symptomInstances.length; i++) {
+        console.log('symptomInstances index', i);
+        let symptomInstance = symptomInstances[i];
+        let meals = await ResultsService.getMealsWithinSymptomThreshold(
           db,
           user.id,
-          userSymptom.type
+          symptomInstance.created
         );
+        console.log('meals', meals);
+        for (let i = 0; i < meals.length; i++) {
+          let meal = meals[i];
+          console.log('meals index', i);
+          let foodIds = await ResultsService.getMealFoods(db, meal.id);
+          const frequencyIterator = Math.ceil(symptomInstance.severity_id / 2);
 
-        symptomInstances.forEach((symptomInstance, index) => {
-          console.log('symptomInstances index', index);
-          let meals = await ResultsService.getMealsWithinSymptomThreshold(
-            db,
-            user.id,
-            symptomInstance.created
-          );
-          console.log('meals', meals);
-          meals.forEach((meal, index) => {
-            console.log('meals index', index);
-            let foodIds = await ResultsService.getMealFoods(db, meal.id);
-            const frequencyIterator = Math.ceil(symptomInstance.severity_id / 2);
-            foodIds.forEach((foodId, index) => {
-              console.log('foodIds index', index);
-              if (!doesArrayObjectIncludeFoodId(foodArray, foodId.food)) {
-                foodArray.push({
-                  foodId: foodId.food,
-                  frequency: frequencyIterator
-                });
-              } else {
-                const index = findIndexWithFoodId(foodArray, foodId.food);
-                foodArray[index].frequency += frequencyIterator;
-              }
-            });
-          });
-        });
-      
-     
-        console.log('foodArray', foodArray);
-        let ingredientArray = [];
-        foodArray.forEach((food) => {
+          for (let i = 0; i < foodIds.length; i++) {
+            let foodId = foodIds[i];
+            console.log('foodIds index', i);
+            if (!doesArrayObjectIncludeFoodId(foodArray, foodId.food)) {
+              foodArray.push({
+                foodId: foodId.food,
+                frequency: frequencyIterator
+              });
+            } else {
+              const index = findIndexWithFoodId(foodArray, foodId.food);
+              foodArray[index].frequency += frequencyIterator;
+            }
+          }
+        }
+      }
+
+      console.log('foodArray', foodArray);
+      let ingredientArray = [];
+      for (let i = 0; i < foodArray.length; i++) {
+        let food = foodArray[i];
         for (i = 0; i < food.frequency; i++) {
           let ingredients = await ResultsService.getIngredientsByFood(
             db,
             food.foodId
           );
-          ingredients.forEach((ingredient) => {
+
+          for (let i = 0; i < ingredients.length; i++) {
+            let ingredient = ingredients[i];
             if (
               !doesArrayObjectIncludeIngredientId(
                 ingredientArray,
@@ -71,30 +78,31 @@ ResultsRouter.use(requireAuth).get('/',(req, res, next) => {
               );
               ingredientArray[index].frequency += 1;
             }
-          });
+          }
         }
-      });
+      }
+
       ingredientArray = ingredientArray.sort((a, b) => {
-        return a.frequency - b.frequency;
+        return b.frequency - a.frequency;
       });
       foodArray = foodArray.sort((a, b) => {
-        return a.frequency - b.frequency;
+        return b.frequency - a.frequency;
       });
       let mostCommonIngredients = ingredientArray.slice(0, 6);
       let mostCommonFoodsIdsAndFrequencies = foodArray.slice(0, 6);
       let mostCommonFoods = [];
-      mostCommonFoodsIdsAndFrequencies.forEach(
-        (foodsIdsAndFrequencies) => {
-          let food = await ResultsService.getAFood(
-            db,
-            foodsIdsAndFrequencies.foodId
-          );
-          mostCommonFoods.push({
-            name: food.name,
-            frequency: foodsIdsAndFrequencies.frequency
-          });
-        }
-      );
+
+      for (let i = 0; i < mostCommonFoodsIdsAndFrequencies.length; i++) {
+        let foodsIdsAndFrequencies = mostCommonFoodsIdsAndFrequencies[i];
+        let food = await ResultsService.getAFood(
+          db,
+          foodsIdsAndFrequencies.foodId
+        );
+        mostCommonFoods.push({
+          name: food.name,
+          frequency: foodsIdsAndFrequencies.frequency
+        });
+      }
       let myResult = {
         symptomType: userSymptom,
         mostCommonFoods,
@@ -102,7 +110,7 @@ ResultsRouter.use(requireAuth).get('/',(req, res, next) => {
       };
       results.push(myResult);
       console.log('myResult', myResult);
-    });
+    }
 
     res.status(200).json(results);
     next();
