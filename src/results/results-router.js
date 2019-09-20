@@ -2,25 +2,25 @@ const express = require('express');
 const ResultsRouter = express.Router();
 const ResultsService = require('./results-service.js');
 const { requireAuth } = require('../middleware/jwt-auth');
-const waterfall = require('async-waterfall');
 
-ResultsRouter.use(requireAuth).get('/', async (req, res, next) => {
+ResultsRouter.use(requireAuth).get('/',(req, res, next) => {
   try {
     const db = req.app.get('db');
     const user = req.user;
     let results = [];
     const userSymptoms = await ResultsService.getUserSymptomTypes(db, user.id);
     console.log('userSymptoms', userSymptoms);
-    userSymptoms.forEach(async (userSymptom, index) => {
+    userSymptoms.forEach((userSymptom, index) => {
       console.log('userSymptoms index', index);
       let foodArray = [];
-      partOne = async () =>{
+   
         let symptomInstances = await ResultsService.getSymptomsByType(
           db,
           user.id,
           userSymptom.type
         );
-        symptomInstances.forEach(async (symptomInstance, index) => {
+
+        symptomInstances.forEach((symptomInstance, index) => {
           console.log('symptomInstances index', index);
           let meals = await ResultsService.getMealsWithinSymptomThreshold(
             db,
@@ -28,7 +28,7 @@ ResultsRouter.use(requireAuth).get('/', async (req, res, next) => {
             symptomInstance.created
           );
           console.log('meals', meals);
-          meals.forEach(async (meal, index) => {
+          meals.forEach((meal, index) => {
             console.log('meals index', index);
             let foodIds = await ResultsService.getMealFoods(db, meal.id);
             const frequencyIterator = Math.ceil(symptomInstance.severity_id / 2);
@@ -42,19 +42,15 @@ ResultsRouter.use(requireAuth).get('/', async (req, res, next) => {
               } else {
                 const index = findIndexWithFoodId(foodArray, foodId.food);
                 foodArray[index].frequency += frequencyIterator;
-                
               }
-              console.log('foodArray', foodArray);
             });
           });
         });
-        
-        partTwo();
-      }
-      partTwo = async ()=> {
+      
+     
         console.log('foodArray', foodArray);
         let ingredientArray = [];
-        foodArray.forEach(async (food) => {
+        foodArray.forEach((food) => {
         for (i = 0; i < food.frequency; i++) {
           let ingredients = await ResultsService.getIngredientsByFood(
             db,
@@ -88,7 +84,7 @@ ResultsRouter.use(requireAuth).get('/', async (req, res, next) => {
       let mostCommonFoodsIdsAndFrequencies = foodArray.slice(0, 6);
       let mostCommonFoods = [];
       mostCommonFoodsIdsAndFrequencies.forEach(
-        async (foodsIdsAndFrequencies) => {
+        (foodsIdsAndFrequencies) => {
           let food = await ResultsService.getAFood(
             db,
             foodsIdsAndFrequencies.foodId
@@ -106,8 +102,6 @@ ResultsRouter.use(requireAuth).get('/', async (req, res, next) => {
       };
       results.push(myResult);
       console.log('myResult', myResult);
-      }
-      partOne();
     });
 
     res.status(200).json(results);
