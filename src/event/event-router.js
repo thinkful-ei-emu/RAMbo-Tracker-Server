@@ -24,26 +24,41 @@ EventRouter
       const response = await EventService.postSymptom(req.app.get("db"), event);
       return res
         .status(201)
-        .json({ response });
+        .json( response );
     }
     if (type === "meal") {
-      const { items,name } = req.body;
+      const { items,name} = req.body;
       const event = {
-        user: req.user.id,
-        items,
-        name
-       
+        user_id: req.user.id,
+        name,
+        created:time
       };
       //insert meal first
-      const response = await EventService.postMeal(req.app.get("db"),  event.user,name);
+      const response = await EventService.postMeal(req.app.get("db"),  event);
       //insert plates by ndbno and meal id which references user_id
       
       
-      await EventService.postPlates(req.app.get("db"), event, response.id)
-      
+      await EventService.postPlates(req.app.get("db"), items, response.id)
+      let meal ={
+        type:'meal',
+        id:response.id,
+        name:response.name,
+        time:response.created,
+        items:[]
+      }
+      let foods = await EventService.getFoodsInMeal(req.app.get('db'),response.id);
+      for(let j=0;j<foods.length;j++){
+        let food={
+          name:foods[j].name
+        }
+        let ingredients = await EventService.getIngredients(req.app.get('db'),foods[j].ndbno);
+        food.ingredients= ingredients.map(ingredient=>ingredient.name);
+        meal.items.push(food)
+        food.ndbno=foods[j].ndbno
+      }
       return res
         .status(201)
-        .json({ response });
+        .json(meal);
     }
     next();
   } catch (error) {
@@ -57,7 +72,8 @@ EventRouter
   for(let i=0; i<meals.length;i++){
     let meal ={
       type:'meal',
-      name:meals[i].id,
+      id:meals[i].id,
+      name:meals[i].name,
       time:meals[i].created,
       items:[]
     }
