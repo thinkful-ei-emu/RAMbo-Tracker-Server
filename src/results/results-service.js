@@ -31,7 +31,7 @@ const ResultsService = {
     return db('food').where({ndbno})
   },
   async getIngredientsByFood(db,ndbno){
-    return db('ingredients').where({food : ndbno});
+    return db.select('*').from('ingredients').where({food : ndbno});
   }
 }
 
