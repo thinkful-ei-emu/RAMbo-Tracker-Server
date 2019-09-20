@@ -40,10 +40,25 @@ EventRouter
       
       
       await EventService.postPlates(req.app.get("db"), event, response.id)
-      
+      let meal ={
+        type:'meal',
+        name:response.id,
+        time:response.created,
+        items:[]
+      }
+      let foods = await EventService.getFoodsInMeal(req.app.get('db'),response.id);
+      for(let j=0;j<foods.length;j++){
+        let food={
+          name:foods[j].name
+        }
+        let ingredients = await EventService.getIngredients(req.app.get('db'),foods[j].ndbno);
+        food.ingredients= ingredients.map(ingredient=>ingredient.name);
+        meal.items.push(food)
+        food.ndbno=foods[j].ndbno
+      }
       return res
         .status(201)
-        .json({ response });
+        .json(meal);
     }
     next();
   } catch (error) {
