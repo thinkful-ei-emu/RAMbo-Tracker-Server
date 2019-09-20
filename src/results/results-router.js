@@ -19,20 +19,20 @@ ResultsRouter.use(requireAuth).get('/', async (req, res, next) => {
         userSymptom.type
       );
 
-      for (let i = 0; i < symptomInstances.length; i++) {
-        let symptomInstance = symptomInstances[i];
+      for (let j = 0; j < symptomInstances.length; j++) {
+        let symptomInstance = symptomInstances[j];
         let meals = await ResultsService.getMealsWithinSymptomThreshold(
           db,
           user.id,
           symptomInstance.created
         );
-        for (let i = 0; i < meals.length; i++) {
-          let meal = meals[i];
+        for (let k = 0; k < meals.length; k++) {
+          let meal = meals[k];
           let foodIds = await ResultsService.getMealFoods(db, meal.id);
           const frequencyIterator = Math.ceil(symptomInstance.severity_id / 2);
 
-          for (let i = 0; i < foodIds.length; i++) {
-            let foodId = foodIds[i];
+          for (let l = 0; l < foodIds.length; l++) {
+            let foodId = foodIds[l];
             if (!doesArrayObjectIncludeFoodId(foodArray, foodId.food)) {
               foodArray.push({
                 foodId: foodId.food,
@@ -45,18 +45,21 @@ ResultsRouter.use(requireAuth).get('/', async (req, res, next) => {
           }
         }
       }
-
+      console.log(foodArray);
       let ingredientArray = [];
       for (let i = 0; i < foodArray.length; i++) {
+        console.log('foodArray index', i);
         let food = foodArray[i];
-        for (i = 0; i < food.frequency; i++) {
+        for (j = 0; j < food.frequency; j++) {
+          console.log(`${j}th iteration over ${food.foodId}`);
           let ingredients = await ResultsService.getIngredientsByFood(
             db,
             food.foodId.toString()
           );
 
-          for (let i = 0; i < ingredients.length; i++) {
-            let ingredient = ingredients[i];
+          for (let k = 0; k < ingredients.length; k++) {
+            console.log('ingredientsArray index', k);
+            let ingredient = ingredients[k];
             if (
               !doesArrayObjectIncludeIngredientId(
                 ingredientArray,

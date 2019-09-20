@@ -15,12 +15,12 @@ const ResultsService = {
     .select('*')
     .from('meals')
     .where({user_id})
-    // .andWhere(knex.raw(':created: BETWEEN :timecode - INTERVAL :fourhours AND timecode - INTERVAL :thirtyminutes', {
-    //   created: 'meals.created',
-    //   timecode,
-    //   fourhours: '4 hours',
-    //   thirtyminutes: '30 minutes'
-    // }));
+    .andWhere(knex.raw(':created: BETWEEN :timecode - INTERVAL :fourhours AND timecode - INTERVAL :thirtyminutes', {
+      created: 'meals.created',
+      timecode,
+      fourhours: '4 hours',
+      thirtyminutes: '30 minutes'
+    }));
   },
 
   async getMealFoods(db, meal){
