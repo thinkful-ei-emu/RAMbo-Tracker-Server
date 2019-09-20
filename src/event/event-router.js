@@ -24,7 +24,7 @@ EventRouter
       const response = await EventService.postSymptom(req.app.get("db"), event);
       return res
         .status(201)
-        .json({ response });
+        .json( response );
     }
     if (type === "meal") {
       const { items,name } = req.body;
