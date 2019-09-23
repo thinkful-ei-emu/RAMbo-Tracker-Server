@@ -183,3 +183,11 @@ POST /food
 request(meal_id, food ndbno)
 
 This will both post the ndbno to the meal as well as request ingredients from the USDA DB
+
+get /results
+
+returns all the users tracked symptoms a,d for each push to a results array with most common foods and ingredients
+
+response
+
+[{symptomType: 'bloating', mostCommonFoods: [bread, oreo cookies, pizza, muffin, steak], mostCommonIngredients: [butter, broccoli, msg, flour, cornstarch}, {symptomType: 'headache', mostCommonFoods: [cereal, yogurt, tilapia fish, beef wellington, crackers], mostCommonIngredients: [milk, whey, gluten, butter, rice]}]
