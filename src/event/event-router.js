@@ -25,30 +25,97 @@ EventRouter
       console.log('post symptom response', response);
       return res
         .status(201)
-        .json({ response });
+        .json( response );
     }
     if (type === "meal") {
-      const { items } = req.body;
+      const { items,name} = req.body;
       const event = {
         user_id: req.user.id,
-        items: items,
-       
+        name,
+        created:time
       };
       //insert meal first
-      const response = await EventService.postMeal(req.app.get("db"), user_id);
+      const response = await EventService.postMeal(req.app.get("db"),  event);
       //insert plates by ndbno and meal id which references user_id
       
       
-      await EventService.postPlates(req.app.get("db"), event, response.id)
-      
+      await EventService.postPlates(req.app.get("db"), items, response.id)
+      let meal ={
+        type:'meal',
+        id:response.id,
+        name:response.name,
+        time:response.created,
+        items:[]
+      }
+      let foods = await EventService.getFoodsInMeal(req.app.get('db'),response.id);
+      for(let j=0;j<foods.length;j++){
+        let food={
+          name:foods[j].name
+        }
+        let ingredients = await EventService.getIngredients(req.app.get('db'),foods[j].ndbno);
+        food.ingredients= ingredients.map(ingredient=>ingredient.name);
+        meal.items.push(food)
+        food.ndbno=foods[j].ndbno
+      }
       return res
         .status(201)
-        .json({ response });
+        .json(meal);
     }
     next();
   } catch (error) {
     next(error);
   }
-});
+})
+.get('/', async (req, res, next)=>{
+  let user_id=req.user.id;
+  let meals = await EventService.getMealsFromUser(req.app.get('db'), user_id);
+  let events=[];
+  for(let i=0; i<meals.length;i++){
+    let meal ={
+      type:'meal',
+      id:meals[i].id,
+      name:meals[i].name,
+      time:meals[i].created,
+      items:[]
+    }
+    let foods = await EventService.getFoodsInMeal(req.app.get('db'),meals[i].id);
+    for(let j=0;j<foods.length;j++){
+      let food={
+        name:foods[j].name
+      }
+      let ingredients = await EventService.getIngredients(req.app.get('db'),foods[j].ndbno);
+      food.ingredients= ingredients.map(ingredient=>ingredient.name);
+      meal.items.push(food)
+      food.ndbno=foods[j].ndbno
+    }
+    events.push(meal)
+  }
+  console.log(events)
+  let symptoms = await EventService.getAllSymptoms(req.app.get('db'), user_id);
+  console.log(symptoms)
+  for(let i=0; i<symptoms.length;i++){
+    //might have problems here, not really able to test
+    events.push({
+      type:'symptom',
+      symptom:symptoms[i].type,
+      severityNumber:symptoms[i].severity_id,
+      severity:symptoms[i].name,
+      name:symptoms[i].type,
+      time:symptoms[i].created
+    })
+  }
+  //maybe wrong direction
+  events.sort((a,b)=> new Date(b.time).getTime()-new Date(a.time).getTime());
+  let result={ 
+    username:req.user.username,
+    display_name:req.user.display_name, 
+    events
+  }
+  return res
+  .status(201)
+  .json(result)
+ 
+  });
+
 
 module.exports = EventRouter

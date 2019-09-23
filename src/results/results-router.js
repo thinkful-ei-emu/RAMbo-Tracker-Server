@@ -26,12 +26,15 @@ ResultsRouter.use(requireAuth).get('/', async (req, res, next) => {
           user.id,
           symptomInstance.created
         );
+        console.log('meals', meals);
         for (let k = 0; k < meals.length; k++) {
           let meal = meals[k];
-          let foodIds = await ResultsService.getMealFoods(db, meal.id);
+          let foodIds = await ResultsService.getMealFoods(db, meal.id); 
+          console.log('foodIds', foodIds);
           const frequencyIterator = Math.ceil(symptomInstance.severity_id / 2);
 
           for (let l = 0; l < foodIds.length; l++) {
+            console.log(foodArray);
             let foodId = foodIds[l];
             if (!doesArrayObjectIncludeFoodId(foodArray, foodId.food)) {
               foodArray.push({
@@ -61,16 +64,16 @@ ResultsRouter.use(requireAuth).get('/', async (req, res, next) => {
             console.log('ingredientsArray index', k);
             let ingredient = ingredients[k];
             if (
-              !doesArrayObjectIncludeIngredientId(
+              !doesArrayObjectIncludeIngredientName(
                 ingredientArray,
-                ingredient.id
+                ingredient.name
               )
             ) {
               ingredientArray.push({ ingredient, frequency: 1 });
             } else {
-              const index = findIndexWithIngredientId(
+              const index = findIndexWithIngredientName(
                 ingredientArray,
-                ingredient.id
+                ingredient.name
               );
               ingredientArray[index].frequency += 1;
             }
@@ -133,19 +136,19 @@ function findIndexWithFoodId(array, id) {
     }
   }
 }
-function doesArrayObjectIncludeIngredientId(array, id) {
+function doesArrayObjectIncludeIngredientName(array, name) {
   let includes = false;
   array.forEach((item) => {
-    if (item.ingredient.id === id) {
+    if (item.ingredient.name === name) {
       includes = true;
     }
   });
   return includes;
 }
 
-function findIndexWithIngredientId(array, id) {
+function findIndexWithIngredientName(array, name) {
   for (let i = 0; i < array.length; i++) {
-    if (array[i].ingredient.id === id) {
+    if (array[i].ingredient.name === name) {
       return i;
     }
   }
