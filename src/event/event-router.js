@@ -22,7 +22,6 @@ EventRouter
         severity_id: severity
       };
       const response = await EventService.postSymptom(req.app.get("db"), event);
-      console.log('post symptom response', response);
       return res
         .status(201)
         .json( response );
@@ -90,9 +89,7 @@ EventRouter
     }
     events.push(meal)
   }
-  console.log(events)
   let symptoms = await EventService.getAllSymptoms(req.app.get('db'), user_id);
-  console.log(symptoms)
   for(let i=0; i<symptoms.length;i++){
     //might have problems here, not really able to test
     events.push({

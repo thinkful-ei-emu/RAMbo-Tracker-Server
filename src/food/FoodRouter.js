@@ -9,13 +9,14 @@ const { requireAuth } = require('../middleware/jwt-auth');
 
 //when user searches for food item to add to meal
 FoodRouter.use(requireAuth)
-  .get('/search/:search', jsonBodyParser, (req, res, next) => {
-    const search = req.params.search;
+  .get('/search', jsonBodyParser, (req, res, next) => {
+    const search = req.query.search;
+    const offset = req.query.offset || 0;
     if (!search) {
       res.send(400).json({ error: "Missing 'term' in request body" });
     }
     rp(
-      `https://api.nal.usda.gov/ndb/search/?format=json&sort=r&q=${search}&max=25&offset=0&api_key=${USDA_API_KEY}`
+      `https://api.nal.usda.gov/ndb/search/?format=json&sort=r&q=${search}&max=25&offset=${offset}&api_key=${USDA_API_KEY}`
     )
       .then((body) => {
         return res.status(200).json(body);
@@ -31,7 +32,6 @@ FoodRouter.use(requireAuth)
       req.app.get('db'),
       ndbno
     );
-    console.log(doesFoodExist);
     if (doesFoodExist.length === 0) {
       const food = await FoodService.addFood(req.app.get('db'), ndbno, name);
       rp(
@@ -39,7 +39,6 @@ FoodRouter.use(requireAuth)
       )
         .then((body) => {
           body = JSON.parse(body);
-          console.log(typeof body);
           return FoodService.addIngredients(req.app.get('db'), ndbno, body);
         })
         .then(() => {

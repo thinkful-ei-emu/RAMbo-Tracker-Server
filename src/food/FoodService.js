@@ -43,7 +43,6 @@ const FoodService = {
     if(!(body.foods[0].food.ing.desc)){
       return ['No ingredient description given by USDA'];
     }
-    console.log(ingredientString)
     const ingredientsArray = ingredientString.split(/[,:\[\]\(\)\{\}.]/).filter(Boolean).map(str=>str.trim());
     for (let i = 0; i < ingredientsArray.length; i++) {
       //removing 'CONTAINS 2% or less of....'
