@@ -5,31 +5,60 @@ const FoodService = {
   addFood(db, ndbno, name) {
     return db("food").insert({'ndbno': ndbno, 'name': name });
   },
+
+  /**
+   * 
+   * @param {the database} db 
+   * @param {the food item that the ingredient is being associated with} ndbno 
+   * @param {the body of the response from usda} body 
+   */
   async addIngredients(db, ndbno, body) {
     const arrayOfIngredients = await this.parseIngredients(body);
     for(let i = 0; i < arrayOfIngredients.length; i++){
     await this.insertIngredients(db, ndbno, arrayOfIngredients[i])
     }
   },
+  /**
+   * Takes the body of the USDA response for a specific food,
+   * gets the ingredients, and does some parsing to transform that into strings
+   * @param {the body of the response from usda to get to the ingredients have to dig deep} body 
+   */
   parseIngredients(body) {
     const ingredientString = body.foods[0].food.ing.desc;
+    if(!(body.foods)){
+      return ['USDA res.body didn\'t even have foods key'];
+    }
+    if(!(body.foods[0])){
+      return ['USDA res.body.foods[0] was falsy'];
+    }
+    if(typeof body.foods[0] !== 'object'){
+      return ['USDA res.body.foods[0] was not an object'];
+    }
+    if(!(body.foods[0].food)){
+      return ['USDA res.body.foods[0].food is falsy'];
+    }
+    if(!(body.foods[0].food.ing)){
+      return ['No ingredients given by USDA'];
+    }
+    if(!(body.foods[0].food.ing.desc)){
+      return ['No ingredient description given by USDA'];
+    }
     console.log(ingredientString)
-    const ingredientsArray = ingredientString.split(",");
+    const ingredientsArray = ingredientString.split(/[,:\[\]\(\)\{\}.]/).filter(Boolean).map(str=>str.trim());
     for (let i = 0; i < ingredientsArray.length; i++) {
       //removing 'CONTAINS 2% or less of....'
-      if (ingredientsArray[i].includes("CONTAINS")) {
+      if (ingredientsArray[i].toLowerCase().includes("contains")) {
         ingredientsArray.splice(i, 1);
+        continue;
       }
-      ingredientsArray[i].trim();
+      if (ingredientsArray[i].toLowerCase().includes("less than")) {
+        ingredientsArray.splice(i, 1);
+        continue;
+      }
+      ingredientsArray[i]=ingredientsArray[i].trim();
       for (let j = 0; j < ingredientsArray[i].length; j++) {
-        if (ingredientsArray[i][j] === "(") {
-          ingredientsArray[i] = ingredientsArray[i].replace(/\(/g, "");
-        }
-        if (ingredientsArray[i][j] === ")") {
-          ingredientsArray[i] = ingredientsArray[i].replace(/\)/g, "");
-        }
-        if (ingredientsArray[i][j] === ".") {
-          ingredientsArray[i] = ingredientsArray[i].replace(/\./g, "");
+        if (ingredientsArray[i][j] === "*") {
+          ingredientsArray[i] = ingredientsArray[i].replace(/\*/g, "").trim();
         }
       }
     }
