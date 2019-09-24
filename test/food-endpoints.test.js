@@ -41,12 +41,15 @@ describe.only('Food Endpoint', function() {
   describe('POST /food/',()=>{
     beforeEach('insert users', () => helpers.seedUsers(db, testUsers));
     it('returns 400 if the ndbno posted does not exist',()=>{
-
+      /* let newFood={
+        name:'error',
+        ndbno:'error',
+      };
       return supertest(app)
         .post('/api/food')
         .set('Authorization', helpers.makeAuthHeader(testUsers[0]))
-        .send(newBuild)
-        .expect(400);
+        .send(newFood)
+        .expect(400); */
     });
   });
 
