@@ -8,10 +8,11 @@ ResultsRouter.use(requireAuth).get('/', async (req, res, next) => {
     const db = req.app.get('db');
     const user = req.user;
     let results = [];
+    let foodObj = {};
     const userSymptoms = await ResultsService.getUserSymptomTypes(db, user.id);
     for (let i = 0; i < userSymptoms.length; i++) {
       let userSymptom = userSymptoms[i];
-      let foodObj = {};
+      
 
       let symptomInstances = await ResultsService.getSymptomsByType(
         db,
@@ -44,23 +45,21 @@ ResultsRouter.use(requireAuth).get('/', async (req, res, next) => {
           }
         }
       }
-      console.log(foodObj);
+    
       let foodArr = Object.entries(foodObj);
       let ingredientsObj = {};
-      for (let i = 0; i < foodArr.length; i++) {
-        console.log('foodObj index', i);
-        let food = foodArr[i][0];
-        for (j = 0; j < foodArr[i][1]; j++) {
-          console.log(`${j}th iteration over ${food.foodId}`);
+      for (let j = 0; j < foodArr.length; j++) {
+        let food = foodArr[j][0];
+        for (k = 0; k < foodArr[k][1]; k++) {
           let ingredients = await ResultsService.getIngredientsByFood(
             db,
-            foodArr[i][0].toString()
+            food.toString()
           );
 
-          for (let k = 0; k < ingredients.length; k++) {
-            console.log('ingredientsObj index', k);
-            let ingredient = ingredients[k];
-            if (ingredientsObj[ingredient.name]) {
+          for (let l = 0; l < ingredients.length; l++) {
+            // console.log('ingredientsObj before ifelse', ingredientsObj);
+            let ingredient = ingredients[l];
+            if (!ingredientsObj[ingredient.name]) {
               ingredientsObj[ingredient.name] = 1;
             } 
             else {
@@ -69,43 +68,52 @@ ResultsRouter.use(requireAuth).get('/', async (req, res, next) => {
           }
         }
       }
+
+      console.log('ingredientsObj after populating', ingredientsObj);
       
-      let ingredientsArr = Object.entries(ingredientObj)
-      ingredientsArr = ingredientObj.sort((a, b) => {
-        return b[1] - b[1];
+      let ingredientsArr = Object.entries(ingredientsObj)
+      ingredientsArr = ingredientsArr.sort((a, b) => {
+        return b[1] - a[1];
       });
+
+      console.log('ingredientsArr', ingredientsArr);
       foodArr = foodArr.sort((a, b) => {
         return b[1] - a[1];
       });
-      let mostCommonIngredients = ingredientObj.slice(0, 5);
+
+      let mostCommonIngredients = ingredientsArr.slice(0, 5);
       let mostCommonFoods = foodArr.slice(0, 5);
       let mostCommonFoodsNames = [];
       let mostCommonIngredientsNames = []; 
 
-      for (let i = 0; i < mostCommonFoods; i++) {    
+      for (let j = 0; j < mostCommonFoods.length; j++) {    
         let food = await ResultsService.getAFood(
           db,
           mostCommonFoods[i][0]
         );
+
         mostCommonFoodsNames.push({
           name: food[0].name,
-          frequency:  mostCommonFoods[i][1]
+          frequency:  mostCommonFoods[j][1]
         });
       }
-      for (let i = 0; i < mostCommonIngredients; i++) {    
+      for (let j = 0; j < mostCommonIngredients.length; j++) {    
         mostCommonIngredientsNames.push({
-          name: food[i][0],
-          frequency:  mostCommonIngredients[i][1]
+          name: mostCommonIngredients[j][0],
+          frequency:  mostCommonIngredients[j][1]
         });
       }
+
+      console.log('mostCommonIngredientsNames', mostCommonIngredientsNames);
       let myResult = {
         symptomType: userSymptom,
         mostCommonFoods : mostCommonFoodsNames,
         mostCommonIngredients : mostCommonIngredientsNames
       };
       results.push(myResult);
+    
     }
-
+  
     res.status(200).json(results);
     next();
   } catch (error) {
