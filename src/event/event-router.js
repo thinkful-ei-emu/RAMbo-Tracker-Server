@@ -14,10 +14,11 @@ EventRouter
       res.status(400).send("no type included");
     }
     if (type === "symptom") {
-      if(symptom === ''){
-        res.status(400).send('symptom is required')
-      }
+      
       const { symptom, severity } = req.body;
+      if(symptom === ''){
+        res.status(400).json({error: 'Symptom name is required'})
+      }
       const event = {
         user_id: req.user.id,
         type: symptom,
