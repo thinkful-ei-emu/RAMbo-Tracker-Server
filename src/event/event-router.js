@@ -22,9 +22,18 @@ EventRouter
         severity_id: severity
       };
       const response = await EventService.postSymptom(req.app.get("db"), event);
+      const severityObj= await EventService.getSeverity(req.app.get("db"), response.severity_id)
+      const adjustedResponse = {
+        type:'symptom',
+        symptom:response.type,
+        severityNumber:response.severity_id,
+        severity:severityObj.name,
+        name:response.type,
+        time:response.created
+      }
       return res
         .status(201)
-        .json( response );
+        .json( adjustedResponse );
     }
     if (type === "meal") {
       const { items,name} = req.body;
