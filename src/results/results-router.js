@@ -11,7 +11,7 @@ ResultsRouter.use(requireAuth).get('/', async (req, res, next) => {
     const userSymptoms = await ResultsService.getUserSymptomTypes(db, user.id);
     for (let i = 0; i < userSymptoms.length; i++) {
       let userSymptom = userSymptoms[i];
-      let foodArray = [];
+      let foodObj = {};
 
       let symptomInstances = await ResultsService.getSymptomsByType(
         db,
@@ -34,78 +34,74 @@ ResultsRouter.use(requireAuth).get('/', async (req, res, next) => {
           const frequencyIterator = Math.ceil(symptomInstance.severity_id / 2);
 
           for (let l = 0; l < foodIds.length; l++) {
-            console.log(foodArray);
+            console.log(foodObj);
             let foodId = foodIds[l];
-            if (!doesArrayObjectIncludeFoodId(foodArray, foodId.food)) {
-              foodArray.push({
-                foodId: foodId.food,
-                frequency: frequencyIterator
-              });
+            if (!foodObj[foodId]) {
+              foodObj[foodId.food] = frequencyIterator;
             } else {
-              const index = findIndexWithFoodId(foodArray, foodId.food);
-              foodArray[index].frequency += frequencyIterator;
+              foodObj[foodId.food] =  foodObj[foodId.food] + frequencyIterator;
             }
           }
         }
       }
-      console.log(foodArray);
-      let ingredientArray = [];
-      for (let i = 0; i < foodArray.length; i++) {
-        console.log('foodArray index', i);
-        let food = foodArray[i];
-        for (j = 0; j < food.frequency; j++) {
+      console.log(foodObj);
+      let foodArr = Object.entries(foodObj);
+      let ingredientsObj = {};
+      for (let i = 0; i < foodArr.length; i++) {
+        console.log('foodObj index', i);
+        let food = foodArr[i][0];
+        for (j = 0; j < foodArr[i][1]; j++) {
           console.log(`${j}th iteration over ${food.foodId}`);
           let ingredients = await ResultsService.getIngredientsByFood(
             db,
-            food.foodId.toString()
+            foodArr[i][0].toString()
           );
 
           for (let k = 0; k < ingredients.length; k++) {
-            console.log('ingredientsArray index', k);
+            console.log('ingredientsObj index', k);
             let ingredient = ingredients[k];
-            if (
-              !doesArrayObjectIncludeIngredientName(
-                ingredientArray,
-                ingredient.name
-              )
-            ) {
-              ingredientArray.push({ ingredient, frequency: 1 });
-            } else {
-              const index = findIndexWithIngredientName(
-                ingredientArray,
-                ingredient.name
-              );
-              ingredientArray[index].frequency += 1;
+            if (ingredientsObj[ingredient.name]) {
+              ingredientsObj[ingredient.name] = 1;
+            } 
+            else {
+              ingredientsObj[ingredient.name] =  ingredientsObj[ingredient.name] + 1;
             }
           }
         }
       }
-
-      ingredientArray = ingredientArray.sort((a, b) => {
-        return b.frequency - a.frequency;
+      
+      let ingredientsArr = Object.entries(ingredientObj)
+      ingredientsArr = ingredientObj.sort((a, b) => {
+        return b[1] - b[1];
       });
-      foodArray = foodArray.sort((a, b) => {
-        return b.frequency - a.frequency;
+      foodArr = foodArr.sort((a, b) => {
+        return b[1] - a[1];
       });
-      let mostCommonIngredients = ingredientArray.slice(0, 5);
-      let mostCommonFoodsIdsAndFrequencies = foodArray.slice(0, 5);
-      let mostCommonFoods = [];
+      let mostCommonIngredients = ingredientObj.slice(0, 5);
+      let mostCommonFoods = foodArr.slice(0, 5);
+      let mostCommonFoodsNames = [];
+      let mostCommonIngredientsNames = []; 
 
-      for (let i = 0; i < mostCommonFoodsIdsAndFrequencies.length; i++) {
-        let foodsIdsAndFrequencies = mostCommonFoodsIdsAndFrequencies[i];
+      for (let i = 0; i < mostCommonFoods; i++) {    
         let food = await ResultsService.getAFood(
           db,
-          foodsIdsAndFrequencies.foodId
+          mostCommonFoods[i][0]
         );
-        mostCommonFoods.push({
+        mostCommonFoodsNames.push({
           name: food[0].name,
-          frequency: foodsIdsAndFrequencies.frequency
+          frequency:  mostCommonFoods[i][1]
+        });
+      }
+      for (let i = 0; i < mostCommonIngredients; i++) {    
+        mostCommonIngredientsNames.push({
+          name: food[i][0],
+          frequency:  mostCommonIngredients[i][1]
         });
       }
       let myResult = {
         symptomType: userSymptom,
-        mostCommonFoods,
-        mostCommonIngredients
+        mostCommonFoods : mostCommonFoodsNames,
+        mostCommonIngredients : mostCommonIngredientsNames
       };
       results.push(myResult);
     }
@@ -118,40 +114,5 @@ ResultsRouter.use(requireAuth).get('/', async (req, res, next) => {
     next(error);
   }
 });
-
-function doesArrayObjectIncludeFoodId(array, id) {
-  let includes = false;
-  array.forEach((item) => {
-    if (item.foodId === id) {
-      includes = true;
-    }
-  });
-  return includes;
-}
-
-function findIndexWithFoodId(array, id) {
-  for (let i = 0; i < array.length; i++) {
-    if (array[i].foodId === id) {
-      return i;
-    }
-  }
-}
-function doesArrayObjectIncludeIngredientName(array, name) {
-  let includes = false;
-  array.forEach((item) => {
-    if (item.ingredient.name === name) {
-      includes = true;
-    }
-  });
-  return includes;
-}
-
-function findIndexWithIngredientName(array, name) {
-  for (let i = 0; i < array.length; i++) {
-    if (array[i].ingredient.name === name) {
-      return i;
-    }
-  }
-}
 
 module.exports = ResultsRouter;
