@@ -14,6 +14,9 @@ EventRouter
       res.status(400).send("no type included");
     }
     if (type === "symptom") {
+      if(symptom === ''){
+        res.status(400).send('symptom is required')
+      }
       const { symptom, severity } = req.body;
       const event = {
         user: req.user.id,
