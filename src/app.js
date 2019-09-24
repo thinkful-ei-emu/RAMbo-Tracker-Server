@@ -4,6 +4,7 @@ const helmet = require('helmet');
 const cors = require('cors');
 const userRouter = require('./user/user-router');
 const authRouter = require('./auth/auth-router');
+const ResultsRouter = require('./results/results-router.js');
 require('dotenv').config();
 
 const {NODE_ENV} = require('./config');
@@ -16,7 +17,7 @@ app.use(morgan(morganOptions));
 app.use('/api/auth', authRouter);
 
 app.use('/api/user', userRouter);
-
+app.use('/api/results', ResultsRouter);
 app.use('/api/food', FoodRouter)
 app.use('/api/event', EventRouter)
 app.get('/',(req,res)=>{
