@@ -29,7 +29,7 @@ const FoodService = {
     }
     
     const ingredientString = body.ingredients;
-    const ingredientsArray = ingredientString.split(/[,:\[\]\(\)\{\}.]/).filter(Boolean).map(str=>str.trim());
+    const ingredientsArray = ingredientString.split(/[,:\[\]\(\)\{\}.]/).map(str=>str.trim()).filter(Boolean);
     for (let i = 0; i < ingredientsArray.length; i++) {
       //removing 'CONTAINS 2% or less of....'
       if (ingredientsArray[i].toLowerCase().includes("contains")) {
