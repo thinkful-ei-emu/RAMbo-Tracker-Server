@@ -1,6 +1,6 @@
 const app = require('../src/app');
 const helpers = require('./test-helpers');
-describe.only('Food Endpoint', function() {
+describe('Food Endpoint', function() {
   let db;
 
   const testUsers = helpers.makeUsersArray();

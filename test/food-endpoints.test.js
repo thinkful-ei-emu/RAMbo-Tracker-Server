@@ -16,22 +16,26 @@ describe.only('Food Endpoint', function() {
   before('cleanup', () => helpers.cleanTables(db));
 
   afterEach('cleanup', () => helpers.cleanTables(db));
-  describe('GET /food/search/:search',()=>{
+  describe('GET /food/search?search=id',()=>{
     beforeEach('insert users', () => helpers.seedUsers(db, testUsers));
     it('responds with 200 and responds with a correct looking JSON string rep of an object',()=>{
-      const searchTerm='butter';
+      const searchTerm='ramen';
       return supertest(app)
-        .get(`/api/food/search/${searchTerm}`)
+        .get(`/api/food/search?search=${searchTerm}`)
         .set('Authorization', helpers.makeAuthHeader(testUsers[0])).expect(200)
         .then(res=>{
           let trueRes=JSON.parse(res.body);
           expect(trueRes).to.be.an('object');
-          expect(trueRes.list).to.be.an('object');
-          expect(trueRes.list).to.include.all.keys('q','sort','total','start','item');
-          expect(trueRes.list.q).to.equal(searchTerm);
-          expect(trueRes.list.item).to.be.an('array');
-          for(let i=0;i<trueRes.list.item.length;i++){
-            expect(trueRes.list.item[i]).to.include.all.keys('name','manu','ndbno');
+          expect(trueRes).to.include.all.keys('foodSearchCriteria','totalHits','currentPage','totalPages','foods');
+          expect(trueRes.foodSearchCriteria).to.include.all.keys('generalSearchInput');
+          expect(trueRes.foodSearchCriteria.generalSearchInput).to.equal(searchTerm);
+          expect(trueRes.totalPages).to.be.at.least(2);
+          expect(trueRes.foods).to.be.an('array');
+          for(let i=0;i<trueRes.foods.length;i++){
+            expect(trueRes.foods[i]).to.include.all.keys('description','fdcId','dataType');
+            if(trueRes.foods[i].dataType==='Branded'){
+              expect(trueRes.foods[i]).to.include.all.keys('brandOwner');
+            }
           }
         });
     });

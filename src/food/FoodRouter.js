@@ -49,14 +49,10 @@ FoodRouter.use(requireAuth)
       })
         .then(async (body) => {
           body = JSON.parse(body);
-<<<<<<< HEAD
-          console.log(typeof body);
-          if(body["notFound"]){
-            throw new Error('ndbno not found')
+          if(!(Object.keys(body).includes("description"))){
+            throw new Error('The ID does not exist')
           }
-=======
           const food = await FoodService.addFood(req.app.get('db'), ndbno, body.description);
->>>>>>> master
           return FoodService.addIngredients(req.app.get('db'), ndbno, body);
         })
         .then(() => {
