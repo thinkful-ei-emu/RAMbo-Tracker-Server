@@ -27,15 +27,12 @@ ResultsRouter.use(requireAuth).get('/', async (req, res, next) => {
           user.id,
           symptomInstance.created
         );
-        console.log('meals', meals);
         for (let k = 0; k < meals.length; k++) {
           let meal = meals[k];
           let foodIds = await ResultsService.getMealFoods(db, meal.id); 
-          console.log('foodIds', foodIds);
           const frequencyIterator = Math.ceil(symptomInstance.severity_id / 2);
 
           for (let l = 0; l < foodIds.length; l++) {
-            console.log(foodObj);
             let foodId = foodIds[l];
             if (!foodObj[foodId]) {
               foodObj[foodId.food] = frequencyIterator;
@@ -57,7 +54,6 @@ ResultsRouter.use(requireAuth).get('/', async (req, res, next) => {
           );
 
           for (let l = 0; l < ingredients.length; l++) {
-            // console.log('ingredientsObj before ifelse', ingredientsObj);
             let ingredient = ingredients[l];
             if (!ingredientsObj[ingredient.name]) {
               ingredientsObj[ingredient.name] = 1;
@@ -68,15 +64,12 @@ ResultsRouter.use(requireAuth).get('/', async (req, res, next) => {
           }
         }
       }
-
-      console.log('ingredientsObj after populating', ingredientsObj);
       
       let ingredientsArr = Object.entries(ingredientsObj)
       ingredientsArr = ingredientsArr.sort((a, b) => {
         return b[1] - a[1];
       });
 
-      console.log('ingredientsArr', ingredientsArr);
       foodArr = foodArr.sort((a, b) => {
         return b[1] - a[1];
       });
@@ -104,7 +97,6 @@ ResultsRouter.use(requireAuth).get('/', async (req, res, next) => {
         });
       }
 
-      console.log('mostCommonIngredientsNames', mostCommonIngredientsNames);
       let myResult = {
         symptomType: userSymptom,
         mostCommonFoods : mostCommonFoodsNames,
