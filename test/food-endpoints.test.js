@@ -18,6 +18,13 @@ describe.only('Food Endpoint', function() {
   afterEach('cleanup', () => helpers.cleanTables(db));
   describe('GET /food/search?search=id',()=>{
     beforeEach('insert users', () => helpers.seedUsers(db, testUsers));
+
+    it('responds with 400 if search query parameter is empty',()=>{
+      return supertest(app)
+        .get('/api/food/search')
+        .set('Authorization', helpers.makeAuthHeader(testUsers[0])).expect(400);
+    });
+
     it('responds with 200 and responds with a correct looking JSON string rep of an object',()=>{
       const searchTerm='ramen';
       return supertest(app)
