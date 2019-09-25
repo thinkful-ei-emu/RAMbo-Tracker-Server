@@ -39,6 +39,9 @@ FoodRouter.use(requireAuth)
   //when user wants to add food item to meal, adding ID (ITEM) to meal, search for reports for food item and use service to add ingredients
   .post('/', jsonBodyParser, async (req, res, next) => {
     const { ndbno} = req.body;
+    if(ndbno == null){
+      return res.status(400).json({error:'Needs food id'})
+    }
     const doesFoodExist = await FoodService.searchFood(
       req.app.get('db'),
       ndbno
