@@ -27,6 +27,7 @@ ResultsRouter.use(requireAuth).get('/', async (req, res, next) => {
           user.id,
           symptomInstance.created
         );
+        
         for (let k = 0; k < meals.length; k++) {
           let meal = meals[k];
           let foodIds = await ResultsService.getMealFoods(db, meal.id); 
@@ -78,7 +79,7 @@ ResultsRouter.use(requireAuth).get('/', async (req, res, next) => {
       let mostCommonFoods = foodArr.slice(0, 5);
       let mostCommonFoodsNames = [];
       let mostCommonIngredientsNames = []; 
-      
+
       for (let j = 0; j < mostCommonFoods.length; j++) {    
         let food = await ResultsService.getAFood(
           db,
