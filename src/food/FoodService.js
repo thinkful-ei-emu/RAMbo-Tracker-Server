@@ -28,7 +28,7 @@ const FoodService = {
       return ['USDA body.ingredients was falsy'];
     }
     
-    const ingredientString = body.ingredients;
+    const ingredientString = body.ingredients.replace(/ and\/or /ig,',').replace();
     const ingredientsArray = ingredientString.split(/[,:\[\]\(\)\{\}.]/).map(str=>str.trim()).filter(Boolean);
     for (let i = 0; i < ingredientsArray.length; i++) {
       //removing 'CONTAINS 2% or less of....'
