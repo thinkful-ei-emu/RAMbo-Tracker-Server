@@ -24,26 +24,12 @@ const FoodService = {
    * @param {the body of the response from usda to get to the ingredients have to dig deep} body 
    */
   parseIngredients(body) {
-    const ingredientString = body.foods[0].food.ing.desc;
-    if(!(body.foods)){
-      return ['USDA res.body didn\'t even have foods key'];
+    if(!(body.ingredients)){
+      return ['USDA body.ingredients was falsy'];
     }
-    if(!(body.foods[0])){
-      return ['USDA res.body.foods[0] was falsy'];
-    }
-    if(typeof body.foods[0] !== 'object'){
-      return ['USDA res.body.foods[0] was not an object'];
-    }
-    if(!(body.foods[0].food)){
-      return ['USDA res.body.foods[0].food is falsy'];
-    }
-    if(!(body.foods[0].food.ing)){
-      return ['No ingredients given by USDA'];
-    }
-    if(!(body.foods[0].food.ing.desc)){
-      return ['No ingredient description given by USDA'];
-    }
-    const ingredientsArray = ingredientString.split(/[,:\[\]\(\)\{\}.]/).filter(Boolean).map(str=>str.trim());
+    
+    const ingredientString = body.ingredients;
+    const ingredientsArray = ingredientString.split(/[,:\[\]\(\)\{\}.]/).map(str=>str.trim()).filter(Boolean);
     for (let i = 0; i < ingredientsArray.length; i++) {
       //removing 'CONTAINS 2% or less of....'
       if (ingredientsArray[i].toLowerCase().includes("contains")) {

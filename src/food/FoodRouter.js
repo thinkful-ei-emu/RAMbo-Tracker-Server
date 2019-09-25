@@ -11,13 +11,24 @@ const { requireAuth } = require('../middleware/jwt-auth');
 FoodRouter.use(requireAuth)
   .get('/search', jsonBodyParser, (req, res, next) => {
     const search = req.query.search;
-    const offset = req.query.offset || 0;
     if (!search) {
-      res.send(400).json({ error: "Missing 'term' in request body" });
+      return res.status(400).json({ error: 'need search query' });
     }
-    rp(
-      `https://api.nal.usda.gov/ndb/search/?format=json&sort=r&q=${search}&max=25&offset=${offset}&api_key=${USDA_API_KEY}`
-    )
+    const pageNumber = req.query.pageNumber || 1;
+    rp(`https://api.nal.usda.gov/fdc/v1/search?api_key=${USDA_API_KEY}`, {
+      method: 'POST',
+      headers: {
+        'content-type': 'application/json'
+      },
+      body: JSON.stringify(
+        {
+          'generalSearchInput': search,
+          'requireAllWords': 'true',
+          'includeDataTypes': { 'Survey (FNDDS)': false, 'Foundation': true, 'Branded': true, 'SR Legacy': true },
+          'pageNumber': pageNumber
+        }
+      )
+    })
       .then((body) => {
         return res.status(200).json(body);
       })
@@ -27,18 +38,18 @@ FoodRouter.use(requireAuth)
   })
   //when user wants to add food item to meal, adding ID (ITEM) to meal, search for reports for food item and use service to add ingredients
   .post('/', jsonBodyParser, async (req, res, next) => {
-    const { ndbno, name } = req.body;
+    const { ndbno} = req.body;
     const doesFoodExist = await FoodService.searchFood(
       req.app.get('db'),
       ndbno
     );
     if (doesFoodExist.length === 0) {
-      const food = await FoodService.addFood(req.app.get('db'), ndbno, name);
-      rp(
-        `https://api.nal.usda.gov/ndb/V2/reports?ndbno=${ndbno}&type=b&format=json&api_key=${USDA_API_KEY}`
-      )
-        .then((body) => {
+      rp(`https://api.nal.usda.gov/fdc/v1/${ndbno}?api_key=${USDA_API_KEY}`, {
+        method: 'GET',
+      })
+        .then(async (body) => {
           body = JSON.parse(body);
+          const food = await FoodService.addFood(req.app.get('db'), ndbno, body.description);
           return FoodService.addIngredients(req.app.get('db'), ndbno, body);
         })
         .then(() => {
