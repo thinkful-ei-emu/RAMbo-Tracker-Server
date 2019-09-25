@@ -14,7 +14,11 @@ EventRouter
       res.status(400).send("no type included");
     }
     if (type === "symptom") {
+      
       const { symptom, severity } = req.body;
+      if(symptom === ''){
+        res.status(400).json({error: 'Symptom name is required'})
+      }
       const event = {
         user_id: req.user.id,
         type: symptom,
@@ -98,9 +102,7 @@ EventRouter
     }
     events.push(meal)
   }
-  console.log(events)
   let symptoms = await EventService.getAllSymptoms(req.app.get('db'), user_id);
-  console.log(symptoms)
   for(let i=0; i<symptoms.length;i++){
     //might have problems here, not really able to test
     events.push({
