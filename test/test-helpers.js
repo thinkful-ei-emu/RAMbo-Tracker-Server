@@ -15,12 +15,79 @@ function makeKnexInstance() {
   });
 }
 
+function getSampleSymptomSentByClient(){
+  return {
+    type:'symptom',
+    time:'2019-09-25T20:14:10.168Z',
+    symptom:'Sore eyes',
+    severity:5
+  }
+}
+
+function getSampleSymptomReturnedByServer(){
+  return {
+    type:'symptom',
+    time:'2019-09-25T20:14:10.168Z',
+    symptom:'Sore eyes',
+    name:'Sore eyes',
+    severity:'Extreme',
+    severityNumber:5
+  }
+}
+
+function postSymptomToServer(sym,auth){
+  return supertest(app)
+    .post('/api/event')
+    .set('Authorization', auth)
+    .send(sym);
+}
+
 function getSampleMealSentByClient(){
   return {
     type:'meal',
-    time:'',
+    time:'2019-09-25T19:14:10.168Z',
     name:'Lunch',
-    items:[363898,598570,400223]
+    items:[363898,598570,400223],
+    
+    //Note the bottom 2 will be ignored by server, just here for verifying the results of testing
+    itemNames:{
+      '363898':'ORGANIC RICE RAMEN', 
+      '598570':'ORGANIC RAMEN NOODLES', 
+      '400223':'RAMEN NOODLE SOUP'},
+    ingredientsOf363898:['ORGANIC BROWN RICE FLOUR','ORGANIC WHITE RICE FLOUR','BAMBOO EXTRACT']
+  }
+}
+
+function getSampleMealSentByClient2(){
+  return {
+    type:'meal',
+    time:'2019-09-25T19:14:10.168Z',
+    name:'Lunch',
+    items:[363898],
+    
+    //Note the bottom 2 will be ignored by server, just here for verifying the results of testing
+    itemNames:{
+      '363898':'ORGANIC RICE RAMEN'},
+    ingredientsOf363898:['ORGANIC BROWN RICE FLOUR','ORGANIC WHITE RICE FLOUR','BAMBOO EXTRACT']
+  }
+}
+
+function getSampleMealReturnedByServer2(){
+  return{
+    type: 'meal',
+    name: 'Lunch',
+    time: '2019-09-25T19:14:10.168Z',
+    items: [
+      {
+        name: 'ORGANIC RICE RAMEN',
+        ingredients: [
+          'ORGANIC BROWN RICE FLOUR',
+          'ORGANIC WHITE RICE FLOUR',
+          'BAMBOO EXTRACT'
+        ],
+        ndbno: '363898'
+      }
+    ]
   }
 }
 
@@ -33,10 +100,40 @@ function postFoodToServer(ndbno,auth){
 
 function postMealToServer(mealObj,auth){
   return supertest(app)
-  .post('/api/event')
-  .set('Authorization', auth)
-  .send(mealObj);
+      .post('/api/event')
+      .set('Authorization', auth)
+      .send(mealObj);
 }
+
+
+//Doesn't seem to work for me when I do .expect 
+//after what this function returns
+//I.E. 
+//helpers.postFoodsThenMealToServer(meal,auth)
+//  .expect(201)
+//Doesn't work, so I'm assuming that the design of supertest
+//doesn't allow it to keep chaining supertest methods past the promise wrapper
+async function postFoodsThenMealToServer(mealObj,auth){
+  for(let i=0;i<mealObj.items.length;i++){
+    await postFoodToServer(mealObj.items[i],auth)
+  }
+  return supertest(app)
+      .post('/api/event')
+      .set('Authorization', auth)
+      .send(mealObj);
+}
+
+function postFoodsThenMealToServerExpect201(mealObj,auth){
+  return Promise.all(mealObj.items.map(ndbno=>postFoodToServer(ndbno,auth)))
+    .then(()=>{
+      return supertest(app)
+      .post('/api/event')
+      .set('Authorization', auth)
+      .send(mealObj)
+      .expect(201);
+    });
+}
+
 
 function makeUsersArray() {
   return [
@@ -180,5 +277,14 @@ module.exports = {
   makeAuthHeader,
   cleanTables,
   seedUsers,
-  postFoodToServer
+  postFoodToServer,
+  getSampleMealSentByClient,
+  postMealToServer,
+  postFoodsThenMealToServer,
+  postFoodsThenMealToServerExpect201,
+  getSampleSymptomSentByClient,
+  postSymptomToServer,
+  getSampleMealSentByClient2,
+  getSampleSymptomReturnedByServer,
+  getSampleMealReturnedByServer2
 };

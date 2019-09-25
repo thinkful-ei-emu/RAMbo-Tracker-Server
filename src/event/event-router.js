@@ -11,11 +11,23 @@ EventRouter
   try {
     const { type, time } = req.body;
     if (!type) {
-      res.status(400).send("no type included");
+      res.status(400).send({
+        error: 'Missing \'type\' in request body'
+      });
     }
     if (type === "symptom") {
       
       const { symptom, severity } = req.body;
+      if(symptom == null){
+        return res.status(400).json({
+          error: 'Missing \'symptom\' in request body'
+        });
+      }
+      if(severity == null){
+        return res.status(400).json({
+          error: 'Missing \'severity\' in request body'
+        });
+      }
       if(symptom === ''){
         res.status(400).json({error: 'Symptom name is required'})
       }
@@ -41,6 +53,16 @@ EventRouter
     }
     if (type === "meal") {
       const { items,name} = req.body;
+      if(items == null){
+        return res.status(400).json({
+          error: 'Missing \'items\' in request body'
+        });
+      }
+      if(name == null){
+        return res.status(400).json({
+          error: 'Missing \'name\' in request body'
+        });
+      }
       const event = {
         user_id: req.user.id,
         name,
@@ -122,7 +144,7 @@ EventRouter
     events
   }
   return res
-  .status(201)
+  .status(200)
   .json(result)
  
   });

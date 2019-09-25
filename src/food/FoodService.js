@@ -24,8 +24,8 @@ const FoodService = {
    * @param {the body of the response from usda to get to the ingredients have to dig deep} body 
    */
   parseIngredients(body) {
-    if(!(body.ingredients)){
-      return ['USDA body.ingredients was falsy'];
+    if(!(Object.keys(body).includes('ingredients'))){
+      return ['No ingredients found in the USDA database'];
     }
     
     const ingredientString = body.ingredients.replace(/ and\/or /ig,',').replace();
