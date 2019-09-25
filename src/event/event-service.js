@@ -92,6 +92,14 @@ const EventService = {
       .insert(event)
       .returning("*")
       .then(([s]) => s);;
+  },
+  getSeverity(db,id){
+    return db
+      .from('severity')
+      .select('*')
+      .where({id})
+      .first();
+
   }
 };
 
