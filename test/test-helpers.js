@@ -2,6 +2,7 @@ const knex = require("knex");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const config = require('../src/config');
+const app = require('../src/app');
 
 /**
  * create a knex instance connected to postgres
@@ -12,6 +13,13 @@ function makeKnexInstance() {
     client: "pg",
     connection: process.env.TEST_DB_URL
   });
+}
+
+function postFoodToServer(ndbno,auth){
+  return supertest(app)
+    .post('/api/food')
+    .set('Authorization', auth)
+    .send({ndbno});
 }
 
 function makeUsersArray() {
@@ -155,5 +163,6 @@ module.exports = {
   makeUsersArray,
   makeAuthHeader,
   cleanTables,
-  seedUsers
+  seedUsers,
+  postFoodToServer
 };

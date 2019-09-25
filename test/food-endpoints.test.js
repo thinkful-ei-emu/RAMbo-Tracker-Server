@@ -46,21 +46,43 @@ describe.only('Food Endpoint', function() {
           }
         });
     });
-    //Should make some other things happen if searchTerm is blank or if search results have no results, but it's kind of being handled on the front-end, and not by back-end. Would need to shift things to test it here.
   });
 
   describe('POST /food/',()=>{
     beforeEach('insert users', () => helpers.seedUsers(db, testUsers));
     it('returns 400 if the ndbno posted does not exist',()=>{
-      /* let newFood={
-        name:'error',
-        ndbno:'error',
+      let newFood={
+        ndbno:7
       };
       return supertest(app)
         .post('/api/food')
         .set('Authorization', helpers.makeAuthHeader(testUsers[0]))
         .send(newFood)
-        .expect(400); */
+        .expect(400);
+    });
+    it('returns 204 if the ndbno posted exists, and we check if our database has put in the food and the ingredients',()=>{
+      const ndbno=363898;
+      return helpers.postFoodToServer(ndbno,helpers.makeAuthHeader(testUsers[0]))
+        .expect(204)
+        .then(()=>{
+          return db.from('food')
+            .select('*')
+            .where({ndbno})
+            .first();
+        })
+        .then(res=>{
+          expect(Number(res.ndbno)).to.equal(ndbno);
+          return db.from('ingredients')
+            .select('*')
+            .where({'food':ndbno});
+        })
+        .then(res=>{
+          const answer=['ORGANIC BROWN RICE FLOUR','ORGANIC WHITE RICE FLOUR','BAMBOO EXTRACT'];
+          for(let i=0;i<res.length;i++){
+            expect(Number(res[i].food)).to.equal(ndbno);
+            expect(answer).to.include(res[i].name);
+          }
+        });
     });
   });
 
