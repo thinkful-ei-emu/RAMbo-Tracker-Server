@@ -15,11 +15,27 @@ function makeKnexInstance() {
   });
 }
 
+function getSampleMealSentByClient(){
+  return {
+    type:'meal',
+    time:'',
+    name:'Lunch',
+    items:[363898,598570,400223]
+  }
+}
+
 function postFoodToServer(ndbno,auth){
   return supertest(app)
     .post('/api/food')
     .set('Authorization', auth)
     .send({ndbno});
+}
+
+function postMealToServer(mealObj,auth){
+  return supertest(app)
+  .post('/api/event')
+  .set('Authorization', auth)
+  .send(mealObj);
 }
 
 function makeUsersArray() {
