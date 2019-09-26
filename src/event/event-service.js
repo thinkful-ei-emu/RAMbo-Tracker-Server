@@ -7,11 +7,25 @@ const EventService = {
       .then(([meal]) => meal);
   },
 
+  getMealById(db,id) {
+    return db
+      .from('meals')
+      .where('id', id)
+      .first();
+  },
+
   deleteMeal(db, id) {
     return db
       .from('meals')
       .delete()
       .where('id', id)
+  },
+
+  getSymptomById(db,id) {
+    return db 
+      .from('symptoms')
+      .where('id', id)
+      .first();
   },
 
   deleteSymptom(db, id) {

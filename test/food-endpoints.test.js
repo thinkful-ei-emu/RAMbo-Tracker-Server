@@ -1,6 +1,6 @@
 const app = require('../src/app');
 const helpers = require('./test-helpers');
-describe.only('Food Endpoint', function() {
+describe('Food Endpoint', function() {
   let db;
 
   const testUsers = helpers.makeUsersArray();
@@ -50,8 +50,16 @@ describe.only('Food Endpoint', function() {
 
   describe('POST /food/',()=>{
     beforeEach('insert users', () => helpers.seedUsers(db, testUsers));
+    it('returns 400 if ndbno is not present in request body',()=>{
+      const newFood={};
+      return supertest(app)
+        .post('/api/food')
+        .set('Authorization', helpers.makeAuthHeader(testUsers[0]))
+        .send(newFood)
+        .expect(400);
+    });
     it('returns 400 if the ndbno posted does not exist',()=>{
-      let newFood={
+      const newFood={
         ndbno:7
       };
       return supertest(app)
