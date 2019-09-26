@@ -6,6 +6,21 @@ const EventService = {
       .returning("*")
       .then(([meal]) => meal);
   },
+
+  deleteMeal(db, id) {
+    return db
+      .from('meals')
+      .delete()
+      .where('id', id)
+  },
+
+  deleteSymptom(db, id) {
+    return db 
+      .from('symptoms')
+      .delete()
+      .where('id', id)
+  },
+
   async getIngredients(db, ndbno){
     return db
       .select('ingredients.name')
@@ -83,10 +98,10 @@ const EventService = {
     return db
       .from("symptoms")
       .join("severity", "severity.id", "symptoms.severity_id")
+      .select('severity.id as severity_id', 'type', 'user_id', 'created', 'name', 'symptoms.id as id')
       .where({ user_id });
   },
-  postSymptom(db, event /* user_id */) {
-    //db...insert into...newSymptom
+  postSymptom(db, event) {
     return db
       .from('symptoms')
       .insert(event)
