@@ -47,7 +47,7 @@ ResultsRouter.use(requireAuth).get('/', async (req, res, next) => {
       let ingredientsObj = {};
       for (let j = 0; j < foodArr.length; j++) {
         let food = foodArr[j][0];
-        for (k = 0; k < foodArr[k][1]; k++) {
+        for (k = 0; k < foodArr[j][1]; k++) {
           let ingredients = await ResultsService.getIngredientsByFood(
             db,
             food.toString()
