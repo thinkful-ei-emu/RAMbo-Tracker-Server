@@ -71,7 +71,7 @@ describe('Food Endpoint', function() {
     it('returns 204 if the ndbno posted exists, and we check if our database has put in the food and the ingredients',()=>{
       const ndbno=363898;
       return helpers.postFoodToServer(ndbno,helpers.makeAuthHeader(testUsers[0]))
-        .expect(201)
+        .expect(204)
         .then(()=>{
           return db.from('food')
             .select('*')
