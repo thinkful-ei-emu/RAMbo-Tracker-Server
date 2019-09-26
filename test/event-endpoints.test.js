@@ -33,7 +33,7 @@ describe.only('Event Endpoint', function() {
     });
 
 
-    it('returns 201 when no required request body key is missing, and check the returned meal looks right',async ()=>{
+    it('returns 201 when no required request body key is missing, and check the returned meal looks right',async () => {
       const meal=helpers.getSampleMealSentByClient();
       const auth=helpers.makeAuthHeader(testUsers[0]);
       /* for(let i=0;i<meal.items.length;i++){
@@ -122,6 +122,156 @@ describe.only('Event Endpoint', function() {
     })
   })
 
+  describe('DELETE /event type=\"meal\"',()=>{
+    beforeEach('insert users', () => helpers.seedUsers(db, testUsers));
+    const requiredFields=['type','id'];
+    requiredFields.forEach(field=>{
+      it(`returns 400 when request body doesn't have .${field} key`,()=>{
+        const meal2Delete = {
+          type:'meal',
+          id:1
+        };
+        delete meal2Delete[field];
+        return supertest(app)
+          .delete('/api/event')
+          .set('Authorization', helpers.makeAuthHeader(testUsers[0]))
+          .send(meal2Delete)
+          .expect(400,
+            {
+              error: `Missing '${field}' in request body`
+            });
+      });
+    });
+    it(`returns 404 when the meal doesn't exist`,()=>{
+      const meal2Delete = {
+        type:'meal',
+        id:1
+      };
+      return supertest(app)
+        .delete('/api/event')
+        .set('Authorization', helpers.makeAuthHeader(testUsers[0]))
+        .send(meal2Delete)
+        .expect(404,
+          {
+            error: 'Meal not found'
+          });
+    });
+    it(`returns 403 when meal doesn't belong to the user making the request`,()=>{
+      
+      const meal=helpers.getSampleMealSentByClient2();
+      const auth=helpers.makeAuthHeader(testUsers[0])
+      const authOfDifferentUser=helpers.makeAuthHeader(testUsers[1])
+      return helpers.postFoodsThenMealToServerExpect201 (meal,auth)
+        .then((res)=>{
+          const meal2Delete = {
+            type:'meal',
+            id:res.body.id
+          };
+          return supertest(app)
+            .delete('/api/event')
+            .set('Authorization', authOfDifferentUser)
+            .send(meal2Delete)
+            .expect(403,
+              {
+                error: 'Meal does not belong to user'
+              });
 
+        });
+    });
+    it(`returns 204 and deletes`,async ()=>{
+      const meal=helpers.getSampleMealSentByClient2();
+      const auth=helpers.makeAuthHeader(testUsers[0]);
+      let mealPostRes=await helpers.postFoodsThenMealToServerExpect201 (meal,auth);
+      mealPostRes= mealPostRes.body;
+      return supertest(app)
+            .delete('/api/event')
+            .set('Authorization', auth)
+            .send({type:'meal',id:mealPostRes.id})
+            .expect(204)
+            .then(()=>{
+              return db.from('meals')
+                .where('id',mealPostRes.id)
+                .first()
+                .then(res=>{
+                  expect(res).to.be.undefined;
+                })
+            });
+    });
+  });
+  describe('DELETE /event type=\"symptom\"',()=>{
+    beforeEach('insert users', () => helpers.seedUsers(db, testUsers));
+    const requiredFields=['type','id'];
+    requiredFields.forEach(field=>{
+      it(`returns 400 when request body doesn't have .${field} key`,()=>{
+        const symptom2Delete = {
+          type:'symptom',
+          id:1
+        };
+        delete symptom2Delete[field];
+        return supertest(app)
+          .delete('/api/event')
+          .set('Authorization', helpers.makeAuthHeader(testUsers[0]))
+          .send(symptom2Delete)
+          .expect(400,
+            {
+              error: `Missing '${field}' in request body`
+            });
+      });
+    });
+    it(`returns 404 when the symptom doesn't exist`,()=>{
+      const symptom2Delete = {
+        type:'symptom',
+        id:1
+      };
+      return supertest(app)
+        .delete('/api/event')
+        .set('Authorization', helpers.makeAuthHeader(testUsers[0]))
+        .send(symptom2Delete)
+        .expect(404,
+          {
+            error: 'Symptom not found'
+          });
+    });
+    it(`returns 403 when symptom doesn't belong to the user making the request`,()=>{
+      
+      const symptom=helpers.getSampleSymptomSentByClient();
+      const auth=helpers.makeAuthHeader(testUsers[0])
+      const authOfDifferentUser=helpers.makeAuthHeader(testUsers[1])
+      return helpers.postSymptomToServer(symptom,auth)
+        .then((res)=>{
+          const symptom2Delete = {
+            type:'symptom',
+            id:res.body.id
+          };
+          return supertest(app)
+            .delete('/api/event')
+            .set('Authorization', authOfDifferentUser)
+            .send(symptom2Delete)
+            .expect(403,
+              {
+                error: 'Symptom does not belong to user'
+              });
 
+        });
+    });
+    it(`returns 204 and deletes`,async ()=>{
+      const symptom=helpers.getSampleSymptomSentByClient();
+      const auth=helpers.makeAuthHeader(testUsers[0]);
+      let symptomPostRes=await helpers.postSymptomToServer (symptom,auth);
+      symptomPostRes= symptomPostRes.body;
+      return supertest(app)
+            .delete('/api/event')
+            .set('Authorization', auth)
+            .send({type:'symptom',id:symptomPostRes.id})
+            .expect(204)
+            .then(()=>{
+              return db.from('symptoms')
+                .where('id',symptomPostRes.id)
+                .first()
+                .then(res=>{
+                  expect(res).to.be.undefined;
+                })
+            });
+    });
+  });
 });
