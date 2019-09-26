@@ -4,7 +4,6 @@ const EventRouter = express.Router();
 const jsonBodyParser = express.json();
 const { requireAuth } = require('../middleware/jwt-auth');
 
-
 EventRouter
 .use(requireAuth)
 .post("/", jsonBodyParser, async (req, res, next) => {
@@ -45,7 +44,8 @@ EventRouter
         severityNumber:response.severity_id,
         severity:severityObj.name,
         name:response.type,
-        time:response.created
+        time:response.created,
+        id: response.id
       }
       return res
         .status(201)
@@ -133,7 +133,8 @@ EventRouter
       severityNumber:symptoms[i].severity_id,
       severity:symptoms[i].name,
       name:symptoms[i].type,
-      time:symptoms[i].created
+      time:symptoms[i].created,
+      id: symptoms[i].id
     })
   }
   //maybe wrong direction
@@ -147,7 +148,23 @@ EventRouter
   .status(200)
   .json(result)
  
-  });
+  })
+  .delete('/', jsonBodyParser, async (req, res, next) => {
+    const {type, id} = req.body;
+    console.log(type, id);
+    if (type === 'meal') {
+      EventService.deleteMeal(req.app.get('db'), id)
+      .then(() => {
+        res.status(204).send();
+      })
+    }
+    else {
+      EventService.deleteSymptom(req.app.get('db'), id)
+      .then(() => {
+        res.status(204).send();
+      })
+    }
+  })
 
 
 module.exports = EventRouter

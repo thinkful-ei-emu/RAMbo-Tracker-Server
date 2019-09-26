@@ -12,7 +12,6 @@ ResultsRouter.use(requireAuth).get('/', async (req, res, next) => {
     const userSymptoms = await ResultsService.getUserSymptomTypes(db, user.id);
     for (let i = 0; i < userSymptoms.length; i++) {
       let userSymptom = userSymptoms[i];
-      
 
       let symptomInstances = await ResultsService.getSymptomsByType(
         db,
@@ -27,6 +26,7 @@ ResultsRouter.use(requireAuth).get('/', async (req, res, next) => {
           user.id,
           symptomInstance.created
         );
+
         for (let k = 0; k < meals.length; k++) {
           let meal = meals[k];
           let foodIds = await ResultsService.getMealFoods(db, meal.id); 
@@ -64,8 +64,17 @@ ResultsRouter.use(requireAuth).get('/', async (req, res, next) => {
           }
         }
       }
+      let totalFoodsWeight = 0;
+      for(let z = 0 ; z < foodArr.length; z++){
+        totalFoodsWeight += foodArr[z][1];
+      }
       
       let ingredientsArr = Object.entries(ingredientsObj)
+      let totalIngredientsWeight = 0;
+      for(let z = 0 ; z < ingredientsArr.length; z++){
+        totalIngredientsWeight += ingredientsArr[z][1];
+      }
+
       ingredientsArr = ingredientsArr.sort((a, b) => {
         return b[1] - a[1];
       });
@@ -82,25 +91,28 @@ ResultsRouter.use(requireAuth).get('/', async (req, res, next) => {
       for (let j = 0; j < mostCommonFoods.length; j++) {    
         let food = await ResultsService.getAFood(
           db,
-          mostCommonFoods[i][0]
+          mostCommonFoods[j][0]
         );
 
         mostCommonFoodsNames.push({
           name: food[0].name,
-          frequency:  mostCommonFoods[j][1]
+          weight:  mostCommonFoods[j][1]
         });
       }
+    
       for (let j = 0; j < mostCommonIngredients.length; j++) {    
         mostCommonIngredientsNames.push({
           name: mostCommonIngredients[j][0],
-          frequency:  mostCommonIngredients[j][1]
+          weight:  mostCommonIngredients[j][1]
         });
       }
 
       let myResult = {
         symptomType: userSymptom,
         mostCommonFoods : mostCommonFoodsNames,
-        mostCommonIngredients : mostCommonIngredientsNames
+        mostCommonIngredients : mostCommonIngredientsNames,
+        totalFoodsWeight,
+        totalIngredientsWeight
       };
       results.push(myResult);
     
