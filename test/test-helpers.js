@@ -18,7 +18,7 @@ function makeKnexInstance() {
 function getSampleSymptomSentByClient(){
   return {
     type:'symptom',
-    time:'2019-09-25T20:14:10.168Z',
+    time:'2019-09-25T21:14:10.168Z',
     symptom:'Sore eyes',
     severity:5
   }
@@ -27,7 +27,7 @@ function getSampleSymptomSentByClient(){
 function getSampleSymptomReturnedByServer(){
   return {
     type:'symptom',
-    time:'2019-09-25T20:14:10.168Z',
+    time:'2019-09-25T21:14:10.168Z',
     symptom:'Sore eyes',
     name:'Sore eyes',
     severity:'Extreme',
