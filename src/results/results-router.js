@@ -83,8 +83,8 @@ ResultsRouter.use(requireAuth).get('/', async (req, res, next) => {
         return b[1] - a[1];
       });
 
-      let mostCommonIngredients = ingredientsArr.slice(0, 5);
-      let mostCommonFoods = foodArr.slice(0, 5);
+      let mostCommonIngredients = ingredientsArr.slice(0, 9);
+      let mostCommonFoods = foodArr.slice(0, 9);
       let mostCommonFoodsNames = [];
       let mostCommonIngredientsNames = []; 
 
