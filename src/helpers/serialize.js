@@ -14,12 +14,12 @@ function serializeObjectArr(objArr){
 }
 
 function serializeObject(obj){
-  let newObj = {};
+  let myObj = {};
   let entries = Object.entries(obj);
   for (let i = 0 ; i < entries.length; i++){
-    newObj[entries[i][0]] = xss(entries[i][1]);
+    myObj[entries[i][0]] = xss(entries[i][1]);
   }
-  return newObj;
+  return myObj;
 }
 
 module.exports = {serializeObjectArr, serializeObject};
