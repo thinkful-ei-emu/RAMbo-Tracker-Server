@@ -44,7 +44,6 @@ userRouter.post('/', jsonBodyParser, async (req, res, next) => {
   } catch (error) {
     next(error);
   }
-});
-
+})
 
 module.exports = userRouter;

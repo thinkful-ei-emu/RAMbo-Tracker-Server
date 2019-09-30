@@ -12,6 +12,7 @@ ResultsRouter.use(requireAuth).get('/', async (req, res, next) => {
     const userSymptoms = await ResultsService.getUserSymptomTypes(db, user.id);
     for (let i = 0; i < userSymptoms.length; i++) {
       let userSymptom = userSymptoms[i];
+      console.log(userSymptom);
 
       let symptomInstances = await ResultsService.getSymptomsByType(
         db,
@@ -23,7 +24,9 @@ ResultsRouter.use(requireAuth).get('/', async (req, res, next) => {
         let meals = await ResultsService.getMealsWithinSymptomThreshold(
           db,
           user.id,
-          symptomInstance.created
+          symptomInstance.created,
+          userSymptom.min_time,
+          userSymptom.max_time
         );
 
         for (let k = 0; k < meals.length; k++) {
