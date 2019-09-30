@@ -37,6 +37,7 @@
     "morgan": "^1.9.1",
     "pg": "^7.12.1",
     "postgrator-cli": "^3.3.0",
+    "postgres-interval": "^1.2.0",
     "request": "^2.88.0",
     "request-promise": "^4.2.4",
     "xss": "^1.0.6"
