@@ -16,19 +16,18 @@ SymptomRouter.use(requireAuth)
   })
 
   .patch('/', jsonBodyParser, async (req, res, next) => {
-    console.log('req.body', req.body);
-    const id = req.body;
+    const {id} = req.body;
     const updates = req.body;
     delete updates.id;
-    console.log(updates);
+    console.log(updates.min_time);
     const updatedSymptom = await SymptomService.patchSymptom(req.app.get('db'), id, updates);
     console.log('updatedSymptom', updatedSymptom);
     res.status(200).json(updatedSymptom)
     next();
   })
 
-  .delete('/:id', async (req, res, next) => {
-    const {symptom_id} = req.params;
+  .delete('/:symptom_id', async (req, res, next) => {
+    const { symptom_id } = req.params;
     const numDeleted = await SymptomService.deleteSymptomType(req.app.get('db'), req.user.id, symptom_id);
     if (numDeleted === 0) {
       return res.status(400).send({error: 'Invalid symptom user combination'})
