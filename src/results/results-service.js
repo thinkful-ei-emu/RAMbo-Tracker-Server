@@ -26,7 +26,6 @@ const ResultsService = {
       return userMeals.filter(meal => {
         const mealDate = new Date(meal.created);
         const timecodeDate = new Date(timecode);
-        console.log(max_time);
         // 1000 = 1sec , 60000 = 1 minute , 3600000 = 1 hr
         if((timecodeDate.getTime() - mealDate.getTime()) < max_time && timecodeDate.getTime() - mealDate.getTime() > min_time ){
           return true;
