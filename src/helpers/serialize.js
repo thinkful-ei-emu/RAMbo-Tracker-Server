@@ -1,16 +1,16 @@
 const xss = require('xss');
 
 function serializeObjectArr(objArr){
-  let responses = [];
+  let response = [];
   for (let i = 0 ; i < objArr.length; i++){
     let myObj = {};
-    let entries = Object.entries(foods[i]);
+    let entries = Object.entries(objArr[i]);
     for (let k = 0 ; k < entries.length; k ++){
       myObj[entries[k][0]] = xss(entries[k][1]);
     }
-    responses.push(myObj);
+    response.push(myObj);
   }
-  return responses;
+  return response;
 }
 
 function serializeObject(obj){
