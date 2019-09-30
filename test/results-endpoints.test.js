@@ -1,7 +1,7 @@
 const app = require('../src/app');
 const helpers = require('./test-helpers');
 
-describe.only('Results Endpoint', function() {
+describe('Results Endpoint', function() {
   let db;
 
   const testUsers = helpers.makeUsersArray();
@@ -25,7 +25,7 @@ describe.only('Results Endpoint', function() {
       return helpers
         .seedUsers(db, testUsers)
         .then(() => {
-          return helpers.postSymptomToServer(symptom, auth);
+          return helpers.postSymptomEventToServer(symptom, auth);
         })
         .then(() => {
           return helpers.postFoodsThenMealToServer(meal, auth);

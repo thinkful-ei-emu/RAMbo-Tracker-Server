@@ -19,7 +19,7 @@ function getSampleSymptomSentByClient(){
   return {
     type:'symptom',
     time:'2019-09-25T21:14:10.168Z',
-    symptom:'Sore eyes',
+    symptom:'sore eyes',
     severity:5
   }
 }
@@ -28,14 +28,14 @@ function getSampleSymptomReturnedByServer(){
   return {
     type:'symptom',
     time:'2019-09-25T21:14:10.168Z',
-    symptom:'Sore eyes',
-    name:'Sore eyes',
+    symptom:'sore eyes',
+    name:'sore eyes',
     severity:'Extreme',
     severityNumber:5
   }
 }
 
-function postSymptomToServer(sym,auth){
+function postSymptomEventToServer(sym,auth){
   return supertest(app)
     .post('/api/event')
     .set('Authorization', auth)
@@ -283,7 +283,7 @@ module.exports = {
   postFoodsThenMealToServer,
   postFoodsThenMealToServerExpect201,
   getSampleSymptomSentByClient,
-  postSymptomToServer,
+  postSymptomEventToServer,
   getSampleMealSentByClient2,
   getSampleSymptomReturnedByServer,
   getSampleMealReturnedByServer2
