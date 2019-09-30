@@ -16,6 +16,8 @@ const ResultsService = {
     max_time.days = max_time.days || 0;
     max_time.hours = max_time.hours || 0;
     max_time.minutes = max_time.minutes || 0;
+    min_time = min_time.minutes * 60000 + min_time.hours * 60000 * 60 + min_time.days * 60000 * 60 * 24;
+    max_time = max_time.minutes * 60000 + max_time.hours * 60000 * 60 + max_time.days * 60000 * 60 * 24;
     return db('meals')
     .select('*')
     .from('meals')
@@ -24,8 +26,7 @@ const ResultsService = {
       return userMeals.filter(meal => {
         const mealDate = new Date(meal.created);
         const timecodeDate = new Date(timecode);
-        min_time = min_time.minutes * 60000 + min_time.hours * 60000 * 60 + min_time.days * 60000 * 60 * 24;
-        max_time = max_time.minutes * 60000 + max_time.hours * 60000 * 60 + max_time.days * 60000 * 60 * 24;
+        console.log(max_time);
         // 1000 = 1sec , 60000 = 1 minute , 3600000 = 1 hr
         if((timecodeDate.getTime() - mealDate.getTime()) < max_time && timecodeDate.getTime() - mealDate.getTime() > min_time ){
           return true;
