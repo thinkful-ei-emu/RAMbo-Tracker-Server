@@ -25,7 +25,7 @@ describe.only('Results Endpoint', function() {
       return helpers
         .seedUsers(db, testUsers)
         .then(() => {
-          return helpers.postSymptomToServer(symptom, auth);
+          return helpers.postSymptomEventToServer(symptom, auth);
         })
         .then(() => {
           return helpers.postFoodsThenMealToServer(meal, auth);

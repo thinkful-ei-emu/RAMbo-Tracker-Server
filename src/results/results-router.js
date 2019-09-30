@@ -12,11 +12,11 @@ ResultsRouter.use(requireAuth).get('/', async (req, res, next) => {
     const userSymptoms = await ResultsService.getUserSymptomTypes(db, user.id);
     for (let i = 0; i < userSymptoms.length; i++) {
       let userSymptom = userSymptoms[i];
+      console.log(userSymptom);
 
       let symptomInstances = await ResultsService.getSymptomsByType(
         db,
-        user.id,
-        userSymptom.type
+        userSymptom.type_id
       );
 
       for (let j = 0; j < symptomInstances.length; j++) {
@@ -24,7 +24,9 @@ ResultsRouter.use(requireAuth).get('/', async (req, res, next) => {
         let meals = await ResultsService.getMealsWithinSymptomThreshold(
           db,
           user.id,
-          symptomInstance.created
+          symptomInstance.created,
+          userSymptom.min_time,
+          userSymptom.max_time
         );
 
         for (let k = 0; k < meals.length; k++) {
@@ -83,8 +85,8 @@ ResultsRouter.use(requireAuth).get('/', async (req, res, next) => {
         return b[1] - a[1];
       });
 
-      let mostCommonIngredients = ingredientsArr.slice(0, 5);
-      let mostCommonFoods = foodArr.slice(0, 5);
+      let mostCommonIngredients = ingredientsArr.slice(0, 9);
+      let mostCommonFoods = foodArr.slice(0, 9);
       let mostCommonFoodsNames = [];
       let mostCommonIngredientsNames = []; 
 
