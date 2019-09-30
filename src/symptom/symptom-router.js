@@ -11,14 +11,18 @@ const { requireAuth } = require('../middleware/jwt-auth');
 SymptomRouter.use(requireAuth)
   .get('/', async (req, res, next) => {
     const symptoms = await ResultsService.getUserSymptomTypes(req.app.get('db'), req.user.id);
-    console.log('symptoms', symptoms);
-    res.json(200, symptoms);
+    res.status(200).json(symptoms);
     next();
   })
 
   .patch('/', jsonBodyParser, async (req, res, next) => {
+    console.log('req.body', req.body);
+    const id = req.body;
     const updates = req.body;
-    const updatedSymptom = await SymptomService.patchSymptom(req.app.get('db'), updates);
+    delete updates.id;
+    console.log(updates);
+    const updatedSymptom = await SymptomService.patchSymptom(req.app.get('db'), id, updates);
+    console.log('updatedSymptom', updatedSymptom);
     res.status(200).json(updatedSymptom)
     next();
   })

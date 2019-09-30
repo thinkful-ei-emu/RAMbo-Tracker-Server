@@ -1,8 +1,8 @@
 const SymptomService = {
-  patchSymptom(db, user_id, updates) {
+  patchSymptom(db, id, updates) {
     return db
     .from('user_symptom')
-    .where({user_id})
+    .where({id})
     .update(updates)
     .returning('*')
   },
