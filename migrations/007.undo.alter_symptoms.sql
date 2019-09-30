@@ -7,5 +7,3 @@ UPDATE symptoms SET type = user_symptom.type FROM user_symptom WHERE symptoms.ty
 UPDATE symptoms SET user_id = user_symptom.user_id FROM user_symptom WHERE symptoms.type_id = user_symptom.id;
 
 ALTER TABLE symptoms DROP COLUMN type_id;
-
-
