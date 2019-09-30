@@ -10,7 +10,7 @@ const { requireAuth } = require('../middleware/jwt-auth');
 //when user searches for food item to add to meal
 FoodRouter.use(requireAuth)
   .get('/search', jsonBodyParser, (req, res, next) => {
-    const search = req.query.search;
+    const {search,brand} = req.query;
     if (!search) {
       return res.status(400).json({ error: 'need search query' });
     }
@@ -24,6 +24,7 @@ FoodRouter.use(requireAuth)
         {
           'generalSearchInput': search,
           'requireAllWords': 'true',
+          'brandOwner':brand,
           'includeDataTypes': { 'Survey (FNDDS)': false, 'Foundation': true, 'Branded': true, 'SR Legacy': true },
           'pageNumber': pageNumber
         }
