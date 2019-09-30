@@ -1,7 +1,7 @@
 const app = require('../src/app');
 const helpers = require('./test-helpers');
 
-describe('Results Endpoint', function() {
+describe.only('Results Endpoint', function() {
   let db;
 
   const testUsers = helpers.makeUsersArray();

@@ -15,8 +15,7 @@ ResultsRouter.use(requireAuth).get('/', async (req, res, next) => {
 
       let symptomInstances = await ResultsService.getSymptomsByType(
         db,
-        user.id,
-        userSymptom.type
+        userSymptom.type_id
       );
 
       for (let j = 0; j < symptomInstances.length; j++) {

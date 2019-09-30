@@ -2,11 +2,11 @@ const knex = require('knex');
 
 const ResultsService = {
   async getUserSymptomTypes(db, user_id){
-    return db('symptoms').distinct('type').where({user_id})
+    return db('user_symptom').select('type', 'id AS type_id').where({user_id})
   },
   
-  async getSymptomsByType(db, user_id, type){
-    return db('symptoms').where({user_id, type})
+  async getSymptomsByType(db, type_id){
+    return db('symptoms').where({type_id})
   },
 
   async getMealsWithinSymptomThreshold(db, user_id, timecode){
