@@ -66,7 +66,6 @@ ResultsRouter.use(requireAuth).get('/', async (req, res, next) => {
           }
         }
       }
-      console.log('ingredientsObj',ingredientsObj)
       let totalFoodsWeight = 0;
       for(let z = 0 ; z < foodArr.length; z++){
         totalFoodsWeight += foodArr[z][1];
@@ -85,7 +84,6 @@ ResultsRouter.use(requireAuth).get('/', async (req, res, next) => {
       foodArr = foodArr.sort((a, b) => {
         return b[1] - a[1];
       })
-      console.log('ingredientsArr',ingredientsArr);
 
       let mostCommonIngredients = ingredientsArr.slice(0, 14);
       let mostCommonFoods = foodArr.slice(0, 14);
@@ -127,7 +125,6 @@ ResultsRouter.use(requireAuth).get('/', async (req, res, next) => {
           myResult.symptomType.max_time[field]=0;
         }
       })
-      console.log(myResult)
       results.push(myResult);
     
     }

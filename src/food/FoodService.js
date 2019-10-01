@@ -22,7 +22,7 @@ const FoodService = {
     const initialStringRemoveArray=['and ','derived from ','from ','for ','made with ','preserved by ', 'made from ','including ', 'contains ', 'contains less than 2% of ', 'contains less than 1% of ', 'less than 1% of ', 'less than 2% of '];
   
     //tempted to add 'water' here
-    const entireStringRemove=['and','preservative','preservatives','artificial color','emulsifier','as preservatives', 'protects color', 'color', 'colors'];
+    const entireStringRemove=['and','preservative','preservatives','artificial color','emulsifier','as preservatives', 'protects color', 'color', 'colors', 'to promote color retention', 'may contain one or more of the following'];
     
     //remove . and *
     phrase=phrase.replace(/[.*]/g,'');
