@@ -119,7 +119,17 @@ ResultsRouter.use(requireAuth).get('/', async (req, res, next) => {
       results.push(myResult);
     
     }
-  
+    results.sort((a,b)=>{
+      if(a.symptomType.type>b.symptomType.type){
+        return 1
+      }
+      else if(a.symptomType.type<b.symptomType.type){
+        return -1
+      }
+      else{
+        return 0
+      }
+    })
     res.status(200).json(results);
     next();
   } catch (error) {
