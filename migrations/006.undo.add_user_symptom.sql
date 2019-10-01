@@ -1,1 +1,1 @@
-DROP TABLE user_symptom;
+DROP TABLE user_symptom CASCADE;

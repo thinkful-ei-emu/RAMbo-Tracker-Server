@@ -43,12 +43,12 @@ describe('Results Endpoint', function() {
             'mostCommonIngredients',
             'mostCommonFoods',
             'symptomType',
-            'totalFoodsWeight',
-            'totalIngredientsWeight'
+            'totalFoodsFound',
+            'totalIngredientsFound'
           );
           expect(res[0].symptomType).to.be.an('object');
-          expect(res[0].totalFoodsWeight).to.be.a('number');
-          expect(res[0].totalIngredientsWeight).to.be.a('number');
+          expect(res[0].totalFoodsFound).to.be.a('number');
+          expect(res[0].totalIngredientsFound).to.be.a('number');
           expect(res[0].mostCommonFoods).to.be.an('array');
           expect(res[0].mostCommonIngredients).to.be.an('array');
           expect(res[0].symptomType).to.include.all.keys('type');

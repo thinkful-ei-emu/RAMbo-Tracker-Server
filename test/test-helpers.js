@@ -248,7 +248,8 @@ function cleanTables(db) {
       .then(() =>
         Promise.all([
           trx.raw(`ALTER SEQUENCE users_id_seq minvalue 0 START WITH 1`),
-          trx.raw(`SELECT setval('users_id_seq', 0)`)
+          trx.raw(`SELECT setval('users_id_seq', 0)`),
+          trx.raw(`ALTER SEQUENCE user_symptom_id_seq RESTART with 1`)
         ])
       )
   );
