@@ -1,11 +1,9 @@
+require('dotenv').config();
 const express = require('express');
 const SymptomRouter = express.Router();
-require('dotenv').config();
-const { USDA_API_KEY } = require('../config');
 const jsonBodyParser = express.json();
 const SymptomService = require('./symptom-service');
 const ResultsService = require('../results/results-service')
-const rp = require('request-promise');
 const { requireAuth } = require('../middleware/jwt-auth');
 //when user searches for Symptom item to add to meal
 SymptomRouter.use(requireAuth)
@@ -19,11 +17,16 @@ SymptomRouter.use(requireAuth)
     const {id} = req.body;
     const updates = req.body;
     delete updates.id;
-    console.log(updates.min_time);
     const updatedSymptom = await SymptomService.patchSymptom(req.app.get('db'), id, updates);
     console.log('updatedSymptom', updatedSymptom);
-    res.status(200).json(updatedSymptom)
-    next();
+    if (!updatedSymptom.length) { 
+      res.status(400).json({error: 'Symptom ID not found'})
+      next();
+    }
+    else {
+      res.status(200).json(updatedSymptom[0])
+      next();
+    }
   })
 
   .delete('/:symptom_id', async (req, res, next) => {

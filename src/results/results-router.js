@@ -85,8 +85,8 @@ ResultsRouter.use(requireAuth).get('/', async (req, res, next) => {
         return b[1] - a[1];
       });
 
-      let mostCommonIngredients = ingredientsArr.slice(0, 9);
-      let mostCommonFoods = foodArr.slice(0, 9);
+      let mostCommonIngredients = ingredientsArr.slice(0, 14);
+      let mostCommonFoods = foodArr.slice(0, 14);
       let mostCommonFoodsNames = [];
       let mostCommonIngredientsNames = []; 
 
@@ -113,8 +113,8 @@ ResultsRouter.use(requireAuth).get('/', async (req, res, next) => {
         symptomType: userSymptom,
         mostCommonFoods : mostCommonFoodsNames,
         mostCommonIngredients : mostCommonIngredientsNames,
-        totalFoodsWeight,
-        totalIngredientsWeight
+        totalFoodsFound: foodArr.length,
+        totalIngredientsFound: ingredientsArr.length
       };
       results.push(myResult);
     
