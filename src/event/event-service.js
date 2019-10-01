@@ -136,7 +136,6 @@ const EventService = {
   },
 
   getSymptomTypeId(db, user_id, type) {
-    console.log(user_id, type)
     return db
       .select('id')
       .from('user_symptom')

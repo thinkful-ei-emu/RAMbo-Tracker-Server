@@ -25,10 +25,32 @@ describe('Food Endpoint', function() {
         .set('Authorization', helpers.makeAuthHeader(testUsers[0])).expect(400);
     });
 
-    it('responds with 200 and responds with a correct looking JSON string rep of an object',()=>{
+    it('responds with 200 and responds with a correct looking JSON string rep of an object if queried without brand',()=>{
       const searchTerm='ramen';
       return supertest(app)
         .get(`/api/food/search?search=${searchTerm}`)
+        .set('Authorization', helpers.makeAuthHeader(testUsers[0])).expect(200)
+        .then(res=>{
+          let trueRes=JSON.parse(res.body);
+          expect(trueRes).to.be.an('object');
+          expect(trueRes).to.include.all.keys('foodSearchCriteria','totalHits','currentPage','totalPages','foods');
+          expect(trueRes.foodSearchCriteria).to.include.all.keys('generalSearchInput');
+          expect(trueRes.foodSearchCriteria.generalSearchInput).to.equal(searchTerm);
+          expect(trueRes.totalPages).to.be.at.least(2);
+          expect(trueRes.foods).to.be.an('array');
+          for(let i=0;i<trueRes.foods.length;i++){
+            expect(trueRes.foods[i]).to.include.all.keys('description','fdcId','dataType');
+            if(trueRes.foods[i].dataType==='Branded'){
+              expect(trueRes.foods[i]).to.include.all.keys('brandOwner');
+            }
+          }
+        });
+    });
+    it('responds with 200 and responds with a correct looking JSON string rep of an object if query includes brand',()=>{
+      const searchTerm='chips';
+      const brand='lay\'s';
+      return supertest(app)
+        .get(`/api/food/search?search=${searchTerm}&brand=${brand}`)
         .set('Authorization', helpers.makeAuthHeader(testUsers[0])).expect(200)
         .then(res=>{
           let trueRes=JSON.parse(res.body);
