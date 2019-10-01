@@ -36,6 +36,7 @@
     "knex": "^0.19.4",
     "morgan": "^1.9.1",
     "pg": "^7.12.1",
+    "postgrator": "^3.10.2",
     "postgrator-cli": "^3.3.0",
     "postgres-interval": "^1.2.0",
     "request": "^2.88.0",
