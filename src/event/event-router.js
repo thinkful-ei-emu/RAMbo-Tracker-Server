@@ -3,6 +3,7 @@ const EventService = require("./event-service");
 const EventRouter = express.Router();
 const jsonBodyParser = express.json();
 const { requireAuth } = require('../middleware/jwt-auth');
+const {serializeObjectArr, serializeObject} = require('../helpers/serialize.js')
 
 EventRouter
   .use(requireAuth)
@@ -42,9 +43,10 @@ EventRouter
           time: response.created,
           id: response.id
         }
+        const serializedAdjustedResponse = serializeObject(adjustedResponse)
         return res
           .status(201)
-          .json(adjustedResponse);
+          .json(serializedAdjustedResponse);
       }
       if (type === "meal") {
         const { items, name } = req.body;
@@ -81,6 +83,7 @@ EventRouter
           meal.items.push(food)
           food.ndbno = foods[j].ndbno
         }
+        const serializedMeal = serializeObject(meal);
         return res
           .status(201)
           .json(meal);
@@ -132,7 +135,7 @@ EventRouter
     let result = {
       username: req.user.username,
       display_name: req.user.display_name,
-      events
+      events: serializeObjectArr(events)
     }
     return res
       .status(200)

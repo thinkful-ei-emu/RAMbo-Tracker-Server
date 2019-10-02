@@ -2,6 +2,7 @@ const express = require('express');
 const ResultsRouter = express.Router();
 const ResultsService = require('./results-service.js');
 const { requireAuth } = require('../middleware/jwt-auth');
+const {serializeObjectArr} = require('../helpers/serialize.js')
 
 ResultsRouter.use(requireAuth).get('/', async (req, res, next) => {
   try {
@@ -117,8 +118,10 @@ ResultsRouter.use(requireAuth).get('/', async (req, res, next) => {
       results.push(myResult);
     
     }
-  
-    res.status(200).json(results);
+    
+    let serializedResults = serializeObjectArr(results);
+    console.log(serializedResults);
+    res.status(200).json(serializedResults);
     next();
   } catch (error) {
     console.log(error);
