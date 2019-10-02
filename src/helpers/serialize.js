@@ -22,7 +22,7 @@ function serializeObject(obj){
   let myObj = {};
   let entries = Object.entries(obj);
   for (let i = 0 ; i < entries.length; i++){
-    if(typeof entries[k][1] === 'string'){
+    if(typeof entries[i][1] === 'string'){
       myObj[entries[i][0]] = xss(entries[i][1]);
     }
     else {
