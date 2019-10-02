@@ -6,7 +6,7 @@ function serializeObjectArr(objArr){
     let myObj = {};
     let entries = Object.entries(objArr[i]);
     for (let k = 0 ; k < entries.length; k ++){
-      if(typeof entries[k][1] === string){
+      if(typeof entries[k][1] === 'string'){
         myObj[entries[k][0]] = xss(entries[k][1]);
       }
       else {
@@ -22,7 +22,7 @@ function serializeObject(obj){
   let myObj = {};
   let entries = Object.entries(obj);
   for (let i = 0 ; i < entries.length; i++){
-    if(typeof entries[k][1] === string){
+    if(typeof entries[k][1] === 'string'){
       myObj[entries[i][0]] = xss(entries[i][1]);
     }
     else {
