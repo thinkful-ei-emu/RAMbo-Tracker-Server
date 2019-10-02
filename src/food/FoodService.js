@@ -34,7 +34,7 @@ const FoodService = {
     //handle " and "
     if(phrase.toLowerCase().includes(' and ')|| phrase.toLowerCase().includes(' & ')){
       //the joys of not knowing regex
-      const pieces=phrase.split(' and ').join(',').split('&').map(str=>str.trim()).join(',').split(',').map(str=>str.trim());
+      const pieces=phrase.toLowerCase().split(' and ').join(',').split(' & ').join(',').split(',').map(str=>str.trim()).filter(Boolean);
       
       //Can add this feature once we handle more than 2 layer deep nested arrays in parseIngredients
       /* if(pieces.length>=3){
