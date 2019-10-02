@@ -5,6 +5,7 @@ const cors = require('cors');
 const userRouter = require('./user/user-router');
 const authRouter = require('./auth/auth-router');
 const ResultsRouter = require('./results/results-router.js');
+const SymptomRouter = require('./symptom/symptom-router')
 require('dotenv').config();
 
 const {NODE_ENV} = require('./config');
@@ -14,12 +15,13 @@ const FoodRouter = require('./food/FoodRouter')
 app.use(helmet());
 app.use(cors());
 app.use(morgan(morganOptions));
-app.use('/api/auth', authRouter);
 
+app.use('/api/auth', authRouter);
 app.use('/api/user', userRouter);
 app.use('/api/results', ResultsRouter);
 app.use('/api/food', FoodRouter)
 app.use('/api/event', EventRouter)
+app.use('/api/symptom', SymptomRouter);
 app.get('/',(req,res)=>{
   res.status(200).send('Hello World');
 });
@@ -31,7 +33,6 @@ app.use((err, req, res, next)=>{
   if(NODE_ENV === 'production'){
     response = {error:{message:'Critical Server Error'}};
   }else{
-    console.log(err);
     response = {error:{message:err.message,err}};
     console.log(err);
   }

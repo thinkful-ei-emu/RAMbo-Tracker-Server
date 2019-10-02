@@ -1,7 +1,7 @@
 const app = require('../src/app');
 const helpers = require('./test-helpers');
 
-describe.only('Results Endpoint', function() {
+describe('Results Endpoint', function() {
   let db;
 
   const testUsers = helpers.makeUsersArray();
@@ -25,7 +25,7 @@ describe.only('Results Endpoint', function() {
       return helpers
         .seedUsers(db, testUsers)
         .then(() => {
-          return helpers.postSymptomToServer(symptom, auth);
+          return helpers.postSymptomEventToServer(symptom, auth);
         })
         .then(() => {
           return helpers.postFoodsThenMealToServer(meal, auth);
@@ -43,12 +43,12 @@ describe.only('Results Endpoint', function() {
             'mostCommonIngredients',
             'mostCommonFoods',
             'symptomType',
-            'totalFoodsWeight',
-            'totalIngredientsWeight'
+            'totalFoodsFound',
+            'totalIngredientsFound'
           );
           expect(res[0].symptomType).to.be.an('object');
-          expect(res[0].totalFoodsWeight).to.be.a('number');
-          expect(res[0].totalIngredientsWeight).to.be.a('number');
+          expect(res[0].totalFoodsFound).to.be.a('number');
+          expect(res[0].totalIngredientsFound).to.be.a('number');
           expect(res[0].mostCommonFoods).to.be.an('array');
           expect(res[0].mostCommonIngredients).to.be.an('array');
           expect(res[0].symptomType).to.include.all.keys('type');

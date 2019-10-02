@@ -21,7 +21,7 @@ const EventService = {
       .where('id', id)
   },
 
-  getSymptomById(db,id) {
+  getSymptomEventById(db,id) {
     return db 
       .from('symptoms')
       .where('id', id)
@@ -41,12 +41,14 @@ const EventService = {
       .from("ingredients")
       .where('ingredients.food',ndbno)
   },
+
   getMealsFromUser(db,user_id){
     return db
       .select('*')
       .from('meals')
       .where('meals.user_id',user_id)
   },
+
   getFoodsInMeal(db, mealid){
     return db
       .select('food.name','food.ndbno')
@@ -65,7 +67,7 @@ const EventService = {
   },
   /* async getAllUserData(db, user_id) {
     let meals = await this.getAllMeals(db, user_id);
-    let symptoms = await this.getAllSymptoms(db, user_id);
+    let symptoms = await this.getAllSymptomEvents(db, user_id);
     let mealsAndSymptoms = [];
     for (let i = 0; i < meals.length; i++) {
       let ingredientArr = [];
@@ -108,27 +110,75 @@ const EventService = {
       .join("meals", "meals.id", "plates.meal")
       .where("meals.user_id", user_id);
   }, */
-  getAllSymptoms(db, user_id) {
+  getAllSymptomEvents(db, symptoms) {
     return db
-      .from("symptoms")
+      .from('symptoms')
+      .join('user_symptom', 'user_symptom.id', 'symptoms.type_id')
       .join("severity", "severity.id", "symptoms.severity_id")
+      .whereIn('symptoms.type_id', symptoms)
       .select('severity.id as severity_id', 'type', 'user_id', 'created', 'name', 'symptoms.id as id')
-      .where({ user_id });
   },
-  postSymptom(db, event) {
+
+  postSymptomEvent(db, event) {
     return db
       .from('symptoms')
       .insert(event)
       .returning("*")
       .then(([s]) => s);;
   },
+
   getSeverity(db,id){
     return db
       .from('severity')
       .select('*')
       .where({id})
       .first();
+  },
 
+  getSymptomTypeId(db, user_id, type) {
+    return db
+      .select('id')
+      .from('user_symptom')
+      .where({user_id, type})
+      .first()
+      .then(res => {
+        return (res) ? res.id : null
+      })
+  },
+
+  postSymptomType(db, user_id, type) {
+    return db
+      .from('user_symptom')
+      .insert({
+        user_id,
+        type
+      })
+      .returning('id')
+      .then(([res]) => {
+        return res;
+      })
+  },
+
+  getUserBySymptom(db, id) {
+    return db
+      .select('user_id')
+      .from('user_symptom')
+      .join('symptoms', 'symptoms.type_id', 'user_symptom.id' )
+      .where('symptoms.id', id)
+      .then(([res]) => {
+        return res.user_id;
+      })
+
+  },
+
+  getSymptomTypesByUser(db, user_id) {
+    return db
+      .from('user_symptom')
+      .select('id')
+      .where({user_id})
+      .then(res => {
+        return res;
+      })
   }
 };
 

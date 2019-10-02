@@ -9,23 +9,25 @@ ResultsRouter.use(requireAuth).get('/', async (req, res, next) => {
     const db = req.app.get('db');
     const user = req.user;
     let results = [];
-    let foodObj = {};
     const userSymptoms = await ResultsService.getUserSymptomTypes(db, user.id);
     for (let i = 0; i < userSymptoms.length; i++) {
       let userSymptom = userSymptoms[i];
+      let foodObj = {};
 
       let symptomInstances = await ResultsService.getSymptomsByType(
         db,
-        user.id,
-        userSymptom.type
+        userSymptom.type_id
       );
+      console.log(userSymptom.type,symptomInstances)
 
       for (let j = 0; j < symptomInstances.length; j++) {
         let symptomInstance = symptomInstances[j];
         let meals = await ResultsService.getMealsWithinSymptomThreshold(
           db,
           user.id,
-          symptomInstance.created
+          symptomInstance.created,
+          userSymptom.min_time,
+          userSymptom.max_time
         );
 
         for (let k = 0; k < meals.length; k++) {
@@ -43,7 +45,7 @@ ResultsRouter.use(requireAuth).get('/', async (req, res, next) => {
           }
         }
       }
-    
+      
       let foodArr = Object.entries(foodObj);
       let ingredientsObj = {};
       for (let j = 0; j < foodArr.length; j++) {
@@ -82,10 +84,10 @@ ResultsRouter.use(requireAuth).get('/', async (req, res, next) => {
 
       foodArr = foodArr.sort((a, b) => {
         return b[1] - a[1];
-      });
+      })
 
-      let mostCommonIngredients = ingredientsArr.slice(0, 5);
-      let mostCommonFoods = foodArr.slice(0, 5);
+      let mostCommonIngredients = ingredientsArr.slice(0, 14);
+      let mostCommonFoods = foodArr.slice(0, 14);
       let mostCommonFoodsNames = [];
       let mostCommonIngredientsNames = []; 
 
@@ -112,16 +114,40 @@ ResultsRouter.use(requireAuth).get('/', async (req, res, next) => {
         symptomType: userSymptom,
         mostCommonFoods : mostCommonFoodsNames,
         mostCommonIngredients : mostCommonIngredientsNames,
-        totalFoodsWeight,
-        totalIngredientsWeight
+        totalFoodsFound: foodArr.length,
+        totalIngredientsFound: ingredientsArr.length
       };
+      const necessaryTimeFields=['hours','days','minutes'];
+      necessaryTimeFields.forEach(field=>{
+        if(!myResult.symptomType.min_time[field]){
+          myResult.symptomType.min_time[field]=0;
+        }
+        if(!myResult.symptomType.max_time[field]){
+          myResult.symptomType.max_time[field]=0;
+        }
+      })
       results.push(myResult);
     
     }
+<<<<<<< HEAD
     
     let serializedResults = serializeObjectArr(results);
     console.log(serializedResults);
     res.status(200).json(serializedResults);
+=======
+    results.sort((a,b)=>{
+      if(a.symptomType.type>b.symptomType.type){
+        return 1
+      }
+      else if(a.symptomType.type<b.symptomType.type){
+        return -1
+      }
+      else{
+        return 0
+      }
+    })
+    res.status(200).json(results);
+>>>>>>> 8dc8e7288601c290f6ff9f2eb64e75b808bd4acc
     next();
   } catch (error) {
     console.log(error);
