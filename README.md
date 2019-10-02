@@ -1,7 +1,5 @@
 # Symptom Tracker Server
 
-## Testing a change
-
 
 ## Local dev setup
 
@@ -20,8 +18,10 @@ npm install
 npm run migrate
 env MIGRATION_DB_NAME=symptom-tracker-test npm run migrate
 ```
+Seed your database with the /seeds/seed.tables.sql file
 
 And `npm test` should work at this point
+
 
 ## Configuring Postgres
 
@@ -143,19 +143,15 @@ POST /event
     }`
   response: 201 created
 
-<<<<<<< HEAD
-<<<<<<< HEAD
+
 POST /food
-=======
 #### Searching for a food to add to a meal
 
 ##### This endpoint utilizes the USDA Food Composition Databases
->>>>>>> 5b99255c2a258b54954ef8fb4a41e203336d8182
-=======
+
 #### Searching for a food to add to a meal
 
 ##### This endpoint utilizes the USDA Food Composition Databases
->>>>>>> master
 
 GET /food/search?term=butter
   response: 
@@ -190,4 +186,4 @@ returns all the users tracked symptoms a,d for each push to a results array with
 
 response
 
-[{symptomType: 'bloating', mostCommonFoods: [bread, oreo cookies, pizza, muffin, steak], mostCommonIngredients: [butter, broccoli, msg, flour, cornstarch}, {symptomType: 'headache', mostCommonFoods: [cereal, yogurt, tilapia fish, beef wellington, crackers], mostCommonIngredients: [milk, whey, gluten, butter, rice]}]
+`[{symptomType: 'bloating', mostCommonFoods: [bread, oreo cookies, pizza, muffin, steak], mostCommonIngredients: [butter, broccoli, msg, flour, cornstarch}, {symptomType: 'headache', mostCommonFoods: [cereal, yogurt, tilapia fish, beef wellington, crackers], mostCommonIngredients: [milk, whey, gluten, butter, rice]}]`
