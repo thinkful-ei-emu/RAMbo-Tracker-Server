@@ -4,6 +4,7 @@ const EventRouter = express.Router();
 const jsonBodyParser = express.json();
 const { requireAuth } = require('../middleware/jwt-auth');
 const {serializeObjectArr, serializeObject} = require('../helpers/serialize.js')
+const xss = require('xss');
 
 EventRouter.use(requireAuth)
   .post('/', jsonBodyParser, async (req, res, next) => {
@@ -60,16 +61,11 @@ EventRouter.use(requireAuth)
           name: symptom,
           time: response.created,
           id: response.id
-<<<<<<< HEAD
         }
         const serializedAdjustedResponse = serializeObject(adjustedResponse)
         return res
           .status(201)
           .json(serializedAdjustedResponse);
-=======
-        };
-        return res.status(201).json(adjustedResponse);
->>>>>>> 8dc8e7288601c290f6ff9f2eb64e75b808bd4acc
       }
       if (type === 'meal') {
         const { items, name } = req.body;
@@ -111,14 +107,10 @@ EventRouter.use(requireAuth)
           meal.items.push(food);
           food.ndbno = foods[j].ndbno;
         }
-<<<<<<< HEAD
         const serializedMeal = serializeObject(meal);
         return res
           .status(201)
-          .json(meal);
-=======
-        return res.status(201).json(meal);
->>>>>>> 8dc8e7288601c290f6ff9f2eb64e75b808bd4acc
+          .json(serializedMeal);
       }
       next();
     } catch (error) {
@@ -181,20 +173,14 @@ EventRouter.use(requireAuth)
       (a, b) => new Date(b.time).getTime() - new Date(a.time).getTime()
     );
     let result = {
-      username: req.user.username,
-      display_name: req.user.display_name,
-<<<<<<< HEAD
+      username: xss(req.user.username),
+      display_name: xss(req.user.display_name),
       events: serializeObjectArr(events)
     }
     return res
       .status(200)
       .json(result)
 
-=======
-      events
-    };
-    return res.status(200).json(result);
->>>>>>> 8dc8e7288601c290f6ff9f2eb64e75b808bd4acc
   })
   .delete('/', jsonBodyParser, async (req, res, next) => {
     //Minor detail, and it clearly is ambiguous but
