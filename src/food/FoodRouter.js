@@ -7,6 +7,7 @@ const FoodService = require('./FoodService');
 const rp = require('request-promise');
 const { requireAuth } = require('../middleware/jwt-auth');
 
+
 //when user searches for food item to add to meal
 FoodRouter.use(requireAuth)
   .get('/search', jsonBodyParser, (req, res, next) => {

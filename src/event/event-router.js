@@ -3,6 +3,8 @@ const EventService = require('./event-service');
 const EventRouter = express.Router();
 const jsonBodyParser = express.json();
 const { requireAuth } = require('../middleware/jwt-auth');
+const { serializeObjectArr, serializeObject } = require('../helpers/serialize.js')
+const xss = require('xss');
 
 EventRouter.use(requireAuth)
   .post('/', jsonBodyParser, async (req, res, next) => {
@@ -28,7 +30,7 @@ EventRouter.use(requireAuth)
           req.user.id,
           symptom.toLowerCase()
         );
-        
+
         if (!type_id) {
           type_id = await EventService.postSymptomType(
             req.app.get('db'),
@@ -59,8 +61,11 @@ EventRouter.use(requireAuth)
           name: symptom,
           time: response.created,
           id: response.id
-        };
-        return res.status(201).json(adjustedResponse);
+        }
+        const serializedAdjustedResponse = serializeObject(adjustedResponse)
+        return res
+          .status(201)
+          .json(serializedAdjustedResponse);
       }
       if (type === 'meal') {
         const { items, name } = req.body;
@@ -102,7 +107,10 @@ EventRouter.use(requireAuth)
           meal.items.push(food);
           food.ndbno = foods[j].ndbno;
         }
-        return res.status(201).json(meal);
+        const serializedMeal = serializeObject(meal);
+        return res
+          .status(201)
+          .json(serializedMeal);
       }
       next();
     } catch (error) {
@@ -110,7 +118,7 @@ EventRouter.use(requireAuth)
     }
   })
   .get('/', async (req, res, next) => {
-    try{
+    try {
       let user_id = req.user.id;
       let meals = await EventService.getMealsFromUser(req.app.get('db'), user_id);
       let events = [];
@@ -161,23 +169,26 @@ EventRouter.use(requireAuth)
           id: symptoms[i].id
         });
       }
-
       events.sort(
         (a, b) => new Date(b.time).getTime() - new Date(a.time).getTime()
       );
       let result = {
-        username: req.user.username,
-        display_name: req.user.display_name,
-        events
-      };
-      return res.status(200).json(result);
+        username: xss(req.user.username),
+        display_name: xss(req.user.display_name),
+        events: serializeObjectArr(events)
+      }
+      return res
+        .status(200)
+        .json(result)
     }
-    catch(err){
+    catch (err) {
       next(err);
     }
+
+
   })
   .delete('/', jsonBodyParser, async (req, res, next) => {
-    try{
+    try {
       const { type, id } = req.body;
       for (const field of ['type', 'id'])
         if (req.body[field] == null)
@@ -213,7 +224,7 @@ EventRouter.use(requireAuth)
         return res.status(204).send();
       }
     }
-    catch(err){
+    catch (err) {
       next(err);
     }
   });
