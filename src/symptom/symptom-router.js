@@ -5,6 +5,7 @@ const jsonBodyParser = express.json();
 const SymptomService = require('./symptom-service');
 const ResultsService = require('../results/results-service')
 const { requireAuth } = require('../middleware/jwt-auth');
+const {serializeObject} = require('../helpers/serialize.js')
 //when user searches for Symptom item to add to meal
 SymptomRouter.use(requireAuth)
   .get('/', async (req, res, next) => {
@@ -30,7 +31,8 @@ SymptomRouter.use(requireAuth)
         next();
       }
       else {
-        res.status(200).json(updatedSymptom[0])
+        let serializedSymptom = serializeObject(updatedSymptom[0]);
+        res.status(200).json(serializedSymptom)
         next();
       }
     }
