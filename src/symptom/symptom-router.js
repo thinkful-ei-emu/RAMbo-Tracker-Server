@@ -8,36 +8,52 @@ const { requireAuth } = require('../middleware/jwt-auth');
 //when user searches for Symptom item to add to meal
 SymptomRouter.use(requireAuth)
   .get('/', async (req, res, next) => {
-    const symptoms = await ResultsService.getUserSymptomTypes(req.app.get('db'), req.user.id);
-    res.status(200).json(symptoms);
-    next();
+    try{
+      const symptoms = await ResultsService.getUserSymptomTypes(req.app.get('db'), req.user.id);
+      res.status(200).json(symptoms);
+      next();
+    }
+    catch(err){
+      next(err);
+    }
+    
   })
 
   .patch('/', jsonBodyParser, async (req, res, next) => {
-    const {id} = req.body;
-    const updates = req.body;
-    delete updates.id;
-    const updatedSymptom = await SymptomService.patchSymptom(req.app.get('db'), id, updates);
-    if (!updatedSymptom.length) { 
-      res.status(400).json({error: 'Symptom ID not found'})
-      next();
+    try{
+      const {id} = req.body;
+      const updates = req.body;
+      delete updates.id;
+      const updatedSymptom = await SymptomService.patchSymptom(req.app.get('db'), id, updates);
+      if (!updatedSymptom.length) { 
+        res.status(400).json({error: 'Symptom ID not found'})
+        next();
+      }
+      else {
+        res.status(200).json(updatedSymptom[0])
+        next();
+      }
     }
-    else {
-      res.status(200).json(updatedSymptom[0])
-      next();
+    catch(err){
+      next(err);
     }
   })
 
   .delete('/:symptom_id', async (req, res, next) => {
-    const { symptom_id } = req.params;
-    const numDeleted = await SymptomService.deleteSymptomType(req.app.get('db'), req.user.id, symptom_id);
-    if (numDeleted === 0) {
-      return res.status(400).send({error: 'Invalid symptom user combination'})
+    try{
+      const { symptom_id } = req.params;
+      const numDeleted = await SymptomService.deleteSymptomType(req.app.get('db'), req.user.id, symptom_id);
+      if (numDeleted === 0) {
+        return res.status(400).send({error: 'Invalid symptom user combination'})
+      }
+      else {
+        res.status(204).end();
+      }
+      next();
     }
-    else {
-      res.status(204).end();
+    catch(err){
+      next(err);
     }
-    next();
   })
 
 module.exports = SymptomRouter;
