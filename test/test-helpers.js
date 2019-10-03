@@ -205,15 +205,7 @@ function makeMealFoodsPlatesIngredients(user) {
     }
   ];
 
-  /* const ingredients; =  [
-    {
-      id:
-      name:
-      food:
-    }
-  ]; */
-
-  return [meals, foods, plates/* , ingredients */];
+  return [meals, foods, plates];
 }
 
 /**
