@@ -18,7 +18,6 @@ SymptomRouter.use(requireAuth)
     const updates = req.body;
     delete updates.id;
     const updatedSymptom = await SymptomService.patchSymptom(req.app.get('db'), id, updates);
-    console.log('updatedSymptom', updatedSymptom);
     if (!updatedSymptom.length) { 
       res.status(400).json({error: 'Symptom ID not found'})
       next();
