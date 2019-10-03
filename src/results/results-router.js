@@ -18,7 +18,6 @@ ResultsRouter.use(requireAuth).get('/', async (req, res, next) => {
         db,
         userSymptom.type_id
       );
-      console.log(userSymptom.type,symptomInstances)
 
       for (let j = 0; j < symptomInstances.length; j++) {
         let symptomInstance = symptomInstances[j];
@@ -149,8 +148,6 @@ ResultsRouter.use(requireAuth).get('/', async (req, res, next) => {
     res.status(200).json(serializedResults);
     next();
   } catch (error) {
-    console.log(error);
-    res.status(404).json({ message: 'server error' });
     next(error);
   }
 });

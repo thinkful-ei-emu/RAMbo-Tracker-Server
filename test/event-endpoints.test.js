@@ -1,7 +1,7 @@
 const app = require('../src/app');
 const helpers = require('./test-helpers');
 
-describe('Event Endpoint', function() {
+describe.only('Event Endpoint', function() {
   let db;
 
   const testUsers = helpers.makeUsersArray();
@@ -36,11 +36,6 @@ describe('Event Endpoint', function() {
     it('returns 201 when no required request body key is missing, and check the returned meal looks right', async () => {
       const meal = helpers.getSampleMealSentByClient();
       const auth = helpers.makeAuthHeader(testUsers[0]);
-      /* for(let i=0;i<meal.items.length;i++){
-        await helpers.postFoodToServer(meal.items[i],auth)
-      }
-      return helpers.postMealToServer(meal,auth)
-        .expect(201); */
       return helpers
         .postFoodsThenMealToServerExpect201(meal, auth)
         .then((res) => {

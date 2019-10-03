@@ -3,7 +3,7 @@ const EventService = require('./event-service');
 const EventRouter = express.Router();
 const jsonBodyParser = express.json();
 const { requireAuth } = require('../middleware/jwt-auth');
-const {serializeObjectArr, serializeObject} = require('../helpers/serialize.js')
+const { serializeObjectArr, serializeObject } = require('../helpers/serialize.js')
 const xss = require('xss');
 
 EventRouter.use(requireAuth)
@@ -30,7 +30,7 @@ EventRouter.use(requireAuth)
           req.user.id,
           symptom.toLowerCase()
         );
-        
+
         if (!type_id) {
           type_id = await EventService.postSymptomType(
             req.app.get('db'),
@@ -118,110 +118,114 @@ EventRouter.use(requireAuth)
     }
   })
   .get('/', async (req, res, next) => {
-    let user_id = req.user.id;
-    let meals = await EventService.getMealsFromUser(req.app.get('db'), user_id);
-    let events = [];
-    for (let i = 0; i < meals.length; i++) {
-      let meal = {
-        type: 'meal',
-        id: meals[i].id,
-        name: meals[i].name,
-        time: meals[i].created,
-        items: []
-      };
-      let foods = await EventService.getFoodsInMeal(
-        req.app.get('db'),
-        meals[i].id
-      );
-      for (let j = 0; j < foods.length; j++) {
-        let food = {
-          name: foods[j].name
+    try {
+      let user_id = req.user.id;
+      let meals = await EventService.getMealsFromUser(req.app.get('db'), user_id);
+      let events = [];
+      for (let i = 0; i < meals.length; i++) {
+        let meal = {
+          type: 'meal',
+          id: meals[i].id,
+          name: meals[i].name,
+          time: meals[i].created,
+          items: []
         };
-        let ingredients = await EventService.getIngredients(
+        let foods = await EventService.getFoodsInMeal(
           req.app.get('db'),
-          foods[j].ndbno
+          meals[i].id
         );
-        food.ingredients = ingredients.map((ingredient) => ingredient.name);
-        meal.items.push(food);
-        food.ndbno = foods[j].ndbno;
+        for (let j = 0; j < foods.length; j++) {
+          let food = {
+            name: foods[j].name
+          };
+          let ingredients = await EventService.getIngredients(
+            req.app.get('db'),
+            foods[j].ndbno
+          );
+          food.ingredients = ingredients.map((ingredient) => ingredient.name);
+          meal.items.push(food);
+          food.ndbno = foods[j].ndbno;
+        }
+        events.push(meal);
       }
-      events.push(meal);
+      let symptomTypes = await EventService.getSymptomTypesByUser(
+        req.app.get('db'),
+        user_id
+      );
+      symptomTypes = symptomTypes.map((sym) => sym.id);
+      let symptoms = await EventService.getAllSymptomEvents(
+        req.app.get('db'),
+        symptomTypes
+      );
+      for (let i = 0; i < symptoms.length; i++) {
+        //might have problems here, not really able to test
+        events.push({
+          type: 'symptom',
+          symptom: symptoms[i].type,
+          severityNumber: symptoms[i].severity_id,
+          severity: symptoms[i].name,
+          name: symptoms[i].type,
+          time: symptoms[i].created,
+          id: symptoms[i].id
+        });
+      }
+      events.sort(
+        (a, b) => new Date(b.time).getTime() - new Date(a.time).getTime()
+      );
+      let result = {
+        username: xss(req.user.username),
+        display_name: xss(req.user.display_name),
+        events: serializeObjectArr(events)
+      }
+      return res
+        .status(200)
+        .json(result)
     }
-    let symptomTypes = await EventService.getSymptomTypesByUser(
-      req.app.get('db'),
-      user_id
-    );
-    symptomTypes = symptomTypes.map((sym) => sym.id);
-    let symptoms = await EventService.getAllSymptomEvents(
-      req.app.get('db'),
-      symptomTypes
-    );
-    for (let i = 0; i < symptoms.length; i++) {
-      //might have problems here, not really able to test
-      events.push({
-        type: 'symptom',
-        symptom: symptoms[i].type,
-        severityNumber: symptoms[i].severity_id,
-        severity: symptoms[i].name,
-        name: symptoms[i].type,
-        time: symptoms[i].created,
-        id: symptoms[i].id
-      });
+    catch (err) {
+      next(err);
     }
 
-    events.sort(
-      (a, b) => new Date(b.time).getTime() - new Date(a.time).getTime()
-    );
-    let result = {
-      username: xss(req.user.username),
-      display_name: xss(req.user.display_name),
-      events: serializeObjectArr(events)
-    }
-    return res
-      .status(200)
-      .json(result)
 
   })
   .delete('/', jsonBodyParser, async (req, res, next) => {
-    //Minor detail, and it clearly is ambiguous but
-    //https://stackoverflow.com/questions/14323716/restful-alternatives-to-delete-request-body
-    //It seems that some people might be inclined to use the endpoints:
-    // DELETE api/event/meal/:id
-    // DELETE api/event/symptom/:id
-    //But I think this is fine too, even if not perfectly suit and tied
-    const { type, id } = req.body;
-    for (const field of ['type', 'id'])
-      if (req.body[field] == null)
-        return res.status(400).json({
-          error: `Missing '${field}' in request body`
-        });
+    try {
+      const { type, id } = req.body;
+      for (const field of ['type', 'id'])
+        if (req.body[field] == null)
+          return res.status(400).json({
+            error: `Missing '${field}' in request body`
+          });
 
-    if (type === 'meal') {
-      const meal = await EventService.getMealById(req.app.get('db'), id);
-      if (!meal) {
-        return res.status(404).send({ error: 'Meal not found' });
+      if (type === 'meal') {
+        const meal = await EventService.getMealById(req.app.get('db'), id);
+        if (!meal) {
+          return res.status(404).send({ error: 'Meal not found' });
+        }
+        if (meal.user_id !== req.user.id) {
+          return res.status(403).send({ error: 'Meal does not belong to user' });
+        }
+        await EventService.deleteMeal(req.app.get('db'), id);
+        return res.status(204).send();
+      } else if (type === 'symptom') {
+        const symptom = await EventService.getSymptomEventById(
+          req.app.get('db'),
+          id
+        );
+        if (!symptom) {
+          return res.status(404).send({ error: 'Symptom not found' });
+        }
+        const user = await EventService.getUserBySymptom(req.app.get('db'), id);
+        if (user !== req.user.id) {
+          return res
+            .status(403)
+            .send({ error: 'Symptom does not belong to user' });
+        }
+        await EventService.deleteSymptom(req.app.get('db'), id);
+        return res.status(204).send();
       }
-      if (meal.user_id !== req.user.id) {
-        return res.status(403).send({ error: 'Meal does not belong to user' });
-      }
-      await EventService.deleteMeal(req.app.get('db'), id);
-      return res.status(204).send();
-    } else if (type === 'symptom') {
-      const symptom = await EventService.getSymptomEventById(
-        req.app.get('db'),
-        id
-      );
-      if (!symptom) {
-        return res.status(404).send({ error: 'Symptom not found' });
-      }
-      const user = await EventService.getUserBySymptom(req.app.get('db'), id);
-      if (user !== req.user.id) {
-        return res
-          .status(403)
-          .send({ error: 'Symptom does not belong to user' });
-      }
-      await EventService.deleteSymptom(req.app.get('db'), id);
-      return res.status(204).send();
+    }
+    catch (err) {
+      next(err);
     }
   });
 
