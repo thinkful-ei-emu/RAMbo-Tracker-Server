@@ -129,25 +129,10 @@ ResultsRouter.use(requireAuth).get('/', async (req, res, next) => {
       results.push(myResult);
     
     }
-<<<<<<< HEAD
     
     let serializedResults = serializeObjectArr(results);
     console.log(serializedResults);
     res.status(200).json(serializedResults);
-=======
-    results.sort((a,b)=>{
-      if(a.symptomType.type>b.symptomType.type){
-        return 1
-      }
-      else if(a.symptomType.type<b.symptomType.type){
-        return -1
-      }
-      else{
-        return 0
-      }
-    })
-    res.status(200).json(results);
->>>>>>> 8dc8e7288601c290f6ff9f2eb64e75b808bd4acc
     next();
   } catch (error) {
     console.log(error);
