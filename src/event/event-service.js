@@ -19,12 +19,6 @@ const EventService = {
       .from('meals')
       .delete()
       .where('id', id)
-      .then(() => {
-        return db
-          .from('plates')
-          .delete()
-          .where('meal', id)
-      })
   },
 
   getSymptomEventById(db,id) {
