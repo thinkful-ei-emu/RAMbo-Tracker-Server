@@ -34,7 +34,7 @@ FoodRouter.use(requireAuth)
         return res.status(200).json(body);
       })
       .catch((err) => {
-        return res.status(400).json(err);
+        next(err)
       });
   })
   //when user wants to add food item to meal, adding ID (ITEM) to meal, search for reports for food item and use service to add ingredients
@@ -64,7 +64,7 @@ FoodRouter.use(requireAuth)
           next();
         })
         .catch((error) => {
-          return res.status(400).json(error);
+          next(error);
         });
     } else {
       res.status(204).end();
