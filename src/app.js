@@ -31,9 +31,9 @@ app.get('/',(req,res)=>{
 app.use((err, req, res, next)=>{
   let response;
   if(NODE_ENV === 'production'){
-    response = {error:{message:'Critical Server Error'}};
+    response = {error: 'Critical Server Error'};
   }else{
-    response = {error:{message:err.message,err}};
+    response = {error:err.message};
     console.log(err);
   }
   res.status(500).json(response);

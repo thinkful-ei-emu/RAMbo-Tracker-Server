@@ -34,41 +34,46 @@ FoodRouter.use(requireAuth)
         return res.status(200).json(body);
       })
       .catch((err) => {
-        return res.status(400).json(err);
+        next(err)
       });
   })
   //when user wants to add food item to meal, adding ID (ITEM) to meal, search for reports for food item and use service to add ingredients
   .post('/', jsonBodyParser, async (req, res, next) => {
-    const { ndbno} = req.body;
-    if(ndbno == null){
-      return res.status(400).json({error:'Needs food id'})
+    try{
+      const { ndbno} = req.body;
+      if(ndbno == null){
+        return res.status(400).json({error:'Needs food id'})
+      }
+      const doesFoodExist = await FoodService.searchFood(
+        req.app.get('db'),
+        ndbno
+      );
+      if (doesFoodExist.length === 0) {
+        rp(`https://api.nal.usda.gov/fdc/v1/${ndbno}?api_key=${USDA_API_KEY}`, {
+          method: 'GET',
+        })
+          .then(async (body) => {
+            body = JSON.parse(body);
+            if(!(Object.keys(body).includes("description"))){
+              throw new Error('The ID does not exist');
+            }
+            const food = await FoodService.addFood(req.app.get('db'), ndbno, body.description);
+            return FoodService.addIngredients(req.app.get('db'), ndbno, body);
+          })
+          .then(() => {
+            res.status(204).end();
+            next();
+          })
+          .catch((error) => {
+            next(error);
+          });
+      } else {
+        res.status(204).end();
+        next();
+      }
     }
-    const doesFoodExist = await FoodService.searchFood(
-      req.app.get('db'),
-      ndbno
-    );
-    if (doesFoodExist.length === 0) {
-      rp(`https://api.nal.usda.gov/fdc/v1/${ndbno}?api_key=${USDA_API_KEY}`, {
-        method: 'GET',
-      })
-        .then(async (body) => {
-          body = JSON.parse(body);
-          if(!(Object.keys(body).includes("description"))){
-            throw new Error('The ID does not exist');
-          }
-          const food = await FoodService.addFood(req.app.get('db'), ndbno, body.description);
-          return FoodService.addIngredients(req.app.get('db'), ndbno, body);
-        })
-        .then(() => {
-          res.status(204).end();
-          next();
-        })
-        .catch((error) => {
-          return res.status(400).json(error);
-        });
-    } else {
-      res.status(204).end();
-      next();
+    catch(err){
+      next(err);
     }
   });
 

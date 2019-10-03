@@ -57,9 +57,15 @@ authRouter
       user_id: req.user.id,
       name: req.user.name
     };
-    res.send({
+    try
+    {
+      res.send({
       authToken: AuthService.createJwt(sub, payload)
-    });
+      });
+    }
+    catch(err){
+      next(err);
+    }
   });
 
 module.exports = authRouter;

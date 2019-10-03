@@ -141,7 +141,6 @@ ResultsRouter.use(requireAuth).get('/', async (req, res, next) => {
     res.status(200).json(results);
     next();
   } catch (error) {
-    res.status(404).json({ message: 'server error' });
     next(error);
   }
 });
