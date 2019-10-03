@@ -29,7 +29,7 @@ For tests involving time to run properly, configure your Postgres database to ru
 
 1. Locate the `postgresql.conf` file for your Postgres installation.
    1. E.g. for an OS X, Homebrew install: `/usr/local/var/postgres/postgresql.conf`
-   2. E.g. on Windows, _maybe_: `C:\Program Files\PostgreSQL\11.2\data\postgresql.conf`
+   2. E.g. on Windows, _maybe_: `C: Program Files PostgreSQL 11.2 data postgresql.conf`
    3. E.g  on Ubuntu 18.04 probably: '/etc/postgresql/10/main/postgresql.conf'
 2. Find the `timezone` line and set it to `UTC`:
 
@@ -69,6 +69,12 @@ POST /user
     }`
   response: 
     location
+    serialized:
+    {
+      id,
+      name (as display name)
+      username
+    }
 
 POST /auth/token
   request:
@@ -77,17 +83,27 @@ POST /auth/token
       password
     }`
 
-  response:
+  if correct, response:
     `{
       jwt_token
     }`
 
-GET /user 
+PUT /auth/token
   request:
-    `{
-      jwt_token
-    }`
+  Header with Authorization
 
+  response: `{
+    jwt_token
+  }`
+  
+
+### Events: Either Symptom or Meal
+All endpoints are protected and require a bearer token sent in header (Authorization)
+
+#### Get All User Events
+
+GET /event 
+  
   response:
     `{
       username,
@@ -96,93 +112,98 @@ GET /user
         [
           {
             type: meal, 
+            id: 1,
+            name: 'A meal',
+            time: 2134234,
             items: [
               {
                 name: 'hamburger',
-                ingredients: ['wheat', 'beef', 'salt', 'spices']
+                ingredients: ['wheat', 'beef', 'salt', 'spices'],
+                ndbno: 3982983
               },
               {
                 name: 'fries'.
-                ingredients: ['palm oil', 'potato', 'salt']
+                ingredients: ['palm oil', 'potato', 'salt'],
+                ndbno: 3998723
               }
             ]
-            time: 2134234
           }, 
           {
-            type: symptom, 
+            type: 'symptom', 
             symptom: ‘bloating’, 
-            severity: 4, 
-            time: 13o2847912378
+            severityNumber: 4,
+            severity: severe,
+            name:'bloating',
+            time: 13o2847912378,
+            id:1
           }
         ]
-        symptoms: [‘bloating’, ‘headaches’]
     }`
 
-### Events: Either Symptom or Meal
-
-#### Posting a symptom 
+#### Posting a symptom
 
 POST /event
   request:
     `{
       type: 'symptom'
       symptom: ‘bloating’,
-      severity: 999999999999,
+      severity: 4,
       time: 134134234
     }`
-  response: 201 created
+  response: 201
+  {
+     type: 'symptom',
+          symptom: symptom,
+          severityNumber: 4,
+          severity: severe,
+          name: symptom,
+          time: 134134234,
+          id: 1
+  }
 
 #### Posting a meal
 
 POST /event
-  request(numbers are ids of foods selected in the USDA database):
-   ` {
+
+Request(numbers are ndbno of foods selected in the USDA database):
+
+`{
       type: meal,
       items: [123123, 234, 2345356, 1345, 4356546],
       time: 123123123
     }`
-  response: 201 created
-
-<<<<<<< HEAD
-<<<<<<< HEAD
-POST /food
-=======
-#### Searching for a food to add to a meal
-
-##### This endpoint utilizes the USDA Food Composition Databases
->>>>>>> 5b99255c2a258b54954ef8fb4a41e203336d8182
-=======
-#### Searching for a food to add to a meal
-
-##### This endpoint utilizes the USDA Food Composition Databases
->>>>>>> master
-
-GET /food/search?term=butter
-  response: 
-  `{
-    total: 123,
-    results:
-    [
-      {
-        offset: 0,
-        name: 'Super Excellent Butter',
-        ndbno: 1231231,
-        manu: 'Excellent Butter Company,
-      },
-      {
-        name: 'Okay butter',
-        ndbno: 123123,
-        manu: 'Mediocre Butter Company'
-      }
-    ]
+  response: 201, `{
+   type: 'meal',
+          id: response.id,
+          name: response.name,
+          time: response.created,
+          items: []
   }`
+
+#### Searching for a food to add to a meal
+
+Endpoint requires auth sent in header
+
+##### This endpoint utilizes the USDA Food Composition Databases
+
+GET /food/search
+request:
+/food/search?search=butter&pageNumber=1
+(request must have search term, brand is optional (also as query))
+  response (cut for brevity):
+  `"{ "foodSearchCriteria ":{ "includeDataTypes ":{ "Survey (FNDDS) ":false, "Foundation ":true, "Branded ":true, "SR Legacy ":true}, "generalSearchInput ": "butter ", "pageNumber ":1, "requireAllWords ":true}, "totalHits ":34890, "currentPage ":1, "totalPages ":698,
+  "foods ":[{ "fdcId ":442117, "description ": "BUTTER ", "dataType ": "Branded ", "gtinUpc ": "070399432102 ", "publishedDate ": "2019-04-01 ", "brandOwner ": "Dean Foods Company ", "ingredients ": "PASTEURIZED CREAM (DERIVED FROM MILK), SALT. ", "allHighlightFields ": " ", "score ":290.994},}]"`
 
 #### Posting a food to a meal
 
 POST /food
-request(meal_id, food ndbno)
+request: `{
+  ndbno
+  }`
 
 This will both post the ndbno to the meal as well as request ingredients from the USDA DB
+
+response: 
 
 get /results
 
