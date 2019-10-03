@@ -1,7 +1,13 @@
 # Symptom Tracker Server
 
-## Testing a change
+Deployed server URL: `https://rambo-tracker.herokuapp.com/`
 
+## Technology Used
+
+Node.js
+Framework: Express
+Testing: Mocha/Chai, Supertest
+Auth/Security: jwt, xss, helmet
 
 ## Local dev setup
 
@@ -50,24 +56,22 @@ Start nodemon for the application `npm run dev`
 
 Run the tests `npm test`
 
-
-
 ## Deploying
 
 When your new project is ready for deployment, add a new Heroku application with `heroku create`. This will make a new git remote called "heroku" and you can then `npm run deploy` which will push to this remote's master branch.
 
-## API ENDPOINTS 
+## API ENDPOINTS
 
 ### User Login, Registration
 
 POST /user
   request:
    `{
-      username, 
-      password, 
+      username,
+      password,
       display_name
     }`
-  response: 
+  response:
     location
     serialized:
     {
@@ -96,22 +100,22 @@ PUT /auth/token
     jwt_token
   }`
   
-
 ### Events: Either Symptom or Meal
+
 All endpoints are protected and require a bearer token sent in header (Authorization)
 
 #### Get All User Events
 
-GET /event 
+GET /event
   
   response:
     `{
       username,
       display_name,
-      events: 
+      events:
         [
           {
-            type: meal, 
+            type: meal,
             id: 1,
             name: 'A meal',
             time: 2134234,
@@ -127,10 +131,10 @@ GET /event
                 ndbno: 3998723
               }
             ]
-          }, 
+          },
           {
-            type: 'symptom', 
-            symptom: ‘bloating’, 
+            type: 'symptom',
+            symptom: ‘bloating’,
             severityNumber: 4,
             severity: severe,
             name:'bloating',
@@ -180,11 +184,23 @@ Request(numbers are ndbno of foods selected in the USDA database):
           items: []
   }`
 
-#### Searching for a food to add to a meal
+#### Deleting a meal
+
+DELETE /event
+
+Request:
+`{
+  type
+  id
+}`
+
+Response: 204
+
+### Searching for a food to add to a meal /food
 
 Endpoint requires auth sent in header
 
-##### This endpoint utilizes the USDA Food Composition Databases
+#### This endpoint utilizes the USDA Food Composition Databases
 
 GET /food/search
 request:
@@ -203,12 +219,140 @@ request: `{
 
 This will both post the ndbno to the meal as well as request ingredients from the USDA DB
 
-response: 
+response: 204
 
-get /results
+### Analyzing Results of A Given User: Results Endpoint
 
-returns all the users tracked symptoms a,d for each push to a results array with most common foods and ingredients
+GET /results
 
-response
+returns all the users tracked symptoms
 
-[{symptomType: 'bloating', mostCommonFoods: [bread, oreo cookies, pizza, muffin, steak], mostCommonIngredients: [butter, broccoli, msg, flour, cornstarch}, {symptomType: 'headache', mostCommonFoods: [cereal, yogurt, tilapia fish, beef wellington, crackers], mostCommonIngredients: [milk, whey, gluten, butter, rice]}]
+response: `[
+    {
+        "symptomType": {
+            "type": "Drowzey",
+            "type_id": 1,
+            "min_time": {
+                "minutes": 30,
+                "days": 0,
+                "hours": 0
+            },
+            "max_time": {
+                "hours": 72,
+                "days": 0,
+                "minutes": 0
+            }
+        },
+        "mostCommonFoods": [
+            {
+                "name": "PIZZA HUT 12\" Cheese Pizza, Pan Crust",
+                "weight": 2
+            },
+            {
+                "name": "CHEESE",
+                "weight": 2
+            },
+            {
+                "name": "PIZZA",
+                "weight": 2
+            },
+            {
+                "name": "CHEESE",
+                "weight": 2
+            },
+            {
+                "name": "PRINGLES",
+                "weight": 2
+            }
+        ],
+        "mostCommonIngredients": [
+            {
+                "name": "SALT",
+                "weight": 24
+            },
+            {
+                "name": "ENZYMES",
+                "weight": 12
+            },
+            {
+                "name": "SPICES",
+                "weight": 8
+            },
+            {
+                "name": "WATER",
+                "weight": 6
+            },
+            {
+                "name": "DEXTROSE",
+                "weight": 6
+            },
+            {
+                "name": "CHEESE CULTURES",
+                "weight": 6
+            },
+            {
+                "name": "CHEDDAR CHEESE",
+                "weight": 4
+            },
+            {
+                "name": "WHEY",
+                "weight": 4
+            },
+            {
+                "name": "SOYBEAN OIL",
+                "weight": 4
+            },
+            {
+                "name": "PORK",
+                "weight": 4
+            },
+            {
+                "name": "PAPRIKA",
+                "weight": 4
+            },
+            {
+                "name": "GARLIC POWDER",
+                "weight": 4
+            },
+            {
+                "name": "CITRIC ACID",
+                "weight": 4
+            },
+            {
+                "name": "CULTURES",
+                "weight": 4
+            }
+        ],
+        "totalFoodsFound": 5,
+        "totalIngredientsFound": 102
+}]`
+
+### Symptoms Endpoint
+
+GET /symptom
+
+response: [
+   {
+        "type": "drowzey",
+        "type_id": 2,
+        "min_time": {
+            "minutes": 30
+        },
+        "max_time": {
+            "hours": 72
+        }
+    }
+]
+
+PATCH /symptom
+
+request: {
+  id,
+  updates (for example: min_time: {minutes: 30})
+}
+
+response: returns updated symptom
+
+DELETE /:symptom_id
+
+response: 204
