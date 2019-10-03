@@ -17,7 +17,6 @@ ResultsRouter.use(requireAuth).get('/', async (req, res, next) => {
         db,
         userSymptom.type_id
       );
-      console.log(userSymptom.type,symptomInstances)
 
       for (let j = 0; j < symptomInstances.length; j++) {
         let symptomInstance = symptomInstances[j];
