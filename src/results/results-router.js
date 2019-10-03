@@ -2,7 +2,7 @@ const express = require('express');
 const ResultsRouter = express.Router();
 const ResultsService = require('./results-service.js');
 const { requireAuth } = require('../middleware/jwt-auth');
-const {serializeObjectArr} = require('../helpers/serialize.js')
+const {serializeObjectArr,serializeArray,serializeObject} = require('../helpers/serialize.js')
 
 ResultsRouter.use(requireAuth).get('/', async (req, res, next) => {
   try {
@@ -110,12 +110,13 @@ ResultsRouter.use(requireAuth).get('/', async (req, res, next) => {
       }
 
       let myResult = {
-        symptomType: userSymptom,
-        mostCommonFoods : mostCommonFoodsNames,
-        mostCommonIngredients : mostCommonIngredientsNames,
+        symptomType: serializeObject(userSymptom),
+        mostCommonFoods : serializeObjectArr(mostCommonFoodsNames),
+        mostCommonIngredients : serializeObjectArr(mostCommonIngredientsNames),
         totalFoodsFound: foodArr.length,
         totalIngredientsFound: ingredientsArr.length
       };
+
       const necessaryTimeFields=['hours','days','minutes'];
       necessaryTimeFields.forEach(field=>{
         if(!myResult.symptomType.min_time[field]){
@@ -140,9 +141,7 @@ ResultsRouter.use(requireAuth).get('/', async (req, res, next) => {
         return 0
       }
     })
-    let serializedResults = serializeObjectArr(results);
-    console.log(serializedResults);
-    res.status(200).json(serializedResults);
+    res.status(200).json(results);
     next();
   } catch (error) {
     next(error);

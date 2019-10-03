@@ -18,6 +18,10 @@ function serializeObjectArr(objArr){
   return response;
 }
 
+function serializeArray(arr){
+  return arr.map(ele=>xss(ele));
+}
+
 function serializeObject(obj){
   let myObj = {};
   let entries = Object.entries(obj);
@@ -32,4 +36,4 @@ function serializeObject(obj){
   return myObj;
 }
 
-module.exports = {serializeObjectArr, serializeObject};
+module.exports = {serializeObjectArr, serializeObject, serializeArray};
