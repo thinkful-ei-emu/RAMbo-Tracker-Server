@@ -172,12 +172,6 @@ EventRouter.use(requireAuth)
     return res.status(200).json(result);
   })
   .delete('/', jsonBodyParser, async (req, res, next) => {
-    //Minor detail, and it clearly is ambiguous but
-    //https://stackoverflow.com/questions/14323716/restful-alternatives-to-delete-request-body
-    //It seems that some people might be inclined to use the endpoints:
-    // DELETE api/event/meal/:id
-    // DELETE api/event/symptom/:id
-    //But I think this is fine too, even if not perfectly suit and tied
     const { type, id } = req.body;
     for (const field of ['type', 'id'])
       if (req.body[field] == null)
