@@ -56,6 +56,13 @@ describe.only('Event Endpoint', function() {
           });
         });
     });
+    it('returns 400 when name key in request body is too long', async () => {
+      const meal = helpers.getSampleMealSentByClient();
+      meal.name='01234567890123456789012345678901234567890';
+      const auth = helpers.makeAuthHeader(testUsers[0]);
+      return helpers
+        .postFoodsThenMealToServerExpect400(meal, auth);
+    });
   });
   describe('POST /event type="symptom"', () => {
     beforeEach('insert users', () => helpers.seedUsers(db, testUsers));
@@ -87,6 +94,13 @@ describe.only('Event Endpoint', function() {
           symptom.name = symptom.symptom;
           expect(body).to.deep.include(symptom);
         });
+    });
+    it('returns 400 when symptom key in request body key is missing', () => {
+      const symptom = helpers.getSampleSymptomSentByClient();
+      symptom.symptom='012345678901234567890';
+      return helpers
+        .postSymptomEventToServer(symptom, helpers.makeAuthHeader(testUsers[0]))
+        .expect(400,{ error: 'Symptom name is too long' })
     });
   });
 

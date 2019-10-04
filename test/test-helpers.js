@@ -134,6 +134,17 @@ function postFoodsThenMealToServerExpect201(mealObj,auth){
     });
 }
 
+function postFoodsThenMealToServerExpect400(mealObj,auth){
+  return Promise.all(mealObj.items.map(ndbno=>postFoodToServer(ndbno,auth)))
+    .then(()=>{
+      return supertest(app)
+      .post('/api/event')
+      .set('Authorization', auth)
+      .send(mealObj)
+      .expect(400);
+    });
+}
+
 
 function makeUsersArray() {
   return [
@@ -279,5 +290,6 @@ module.exports = {
   postSymptomEventToServer,
   getSampleMealSentByClient2,
   getSampleSymptomReturnedByServer,
-  getSampleMealReturnedByServer2
+  getSampleMealReturnedByServer2,
+  postFoodsThenMealToServerExpect400
 };
