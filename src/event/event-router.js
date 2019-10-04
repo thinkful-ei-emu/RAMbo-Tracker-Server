@@ -11,7 +11,7 @@ EventRouter.use(requireAuth)
     try {
       const { type, time } = req.body;
       if (!type) {
-        res.status(400).send({
+        return res.status(400).send({
           error: "Missing 'type' in request body"
         });
       }
@@ -23,7 +23,10 @@ EventRouter.use(requireAuth)
               error: `Missing '${field}' in request body`
             });
         if (symptom === '') {
-          res.status(400).json({ error: 'Symptom name is required' });
+          return res.status(400).json({ error: 'Symptom name is required' });
+        }
+        if (symptom.length > 20) {
+          return res.status(400).json({ error: 'Symptom name is too long' });
         }
         let type_id = await EventService.getSymptomTypeId(
           req.app.get('db'),
@@ -74,6 +77,16 @@ EventRouter.use(requireAuth)
             return res.status(400).json({
               error: `Missing '${field}' in request body`
             });
+        if(typeof name !== 'string'){
+          return res.status(400).json({
+            error: `Name must be string in request body`
+          });
+        }
+        if(name.length>40){
+          return res.status(400).json({
+            error: `Name is too long`
+          });
+        }
         const event = {
           user_id: req.user.id,
           name,
