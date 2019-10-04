@@ -95,7 +95,7 @@ describe.only('Event Endpoint', function() {
           expect(body).to.deep.include(symptom);
         });
     });
-    it('returns 400 when symptom key in request body key is missing', () => {
+    it('returns 400 when symptom key in request body key is too long', () => {
       const symptom = helpers.getSampleSymptomSentByClient();
       symptom.symptom='012345678901234567890';
       return helpers
