@@ -1,6 +1,6 @@
 # Symptom Tracker Server
 
-Deployed server URL: `https://rambo-tracker.herokuapp.com/`
+Deployed server URL: [https://rambo-tracker.herokuapp.com/](https://rambo-tracker.herokuapp.com/)
 
 ## Technology Used
 
